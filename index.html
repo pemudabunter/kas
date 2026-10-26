@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1b2d">
+<title>Sistem Kas &amp; Keuangan Pemuda Bunter</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>tailwind.config={darkMode:'class'}</script>
+<style>
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#e9edf1}
+.dark body{background:#0b1020}
+.glass{background:#fff;border:1px solid #e3e8ee;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.dark .glass{background:#111a2e;border-color:#243049;box-shadow:none}
+.inp{width:100%;border-radius:.75rem;border:1px solid #cbd5e1;background:rgba(255,255,255,.8);padding:.55rem .8rem;font-size:.875rem}
+.dark .inp{background:rgba(15,23,42,.7);border-color:#334155;color:#e2e8f0}
+.inp:focus{outline:2px solid #6366f1;outline-offset:1px}
+.btn{border-radius:.75rem;padding:.5rem 1rem;font-size:.875rem;font-weight:600;transition:.2s}
+.btn-p{background:#1e3a6e;color:#fff}.btn-p:hover{background:#17305a}.btn-o{background:#fff;border:1px solid #d5dbe3}.dark .btn-o{background:#111a2e;border-color:#243049}#side .act{background:#1c2b44;color:#fff;box-shadow:inset 3px 0 0 #f26a1b}#side .act i{color:#fff}#bottom .act{color:#1e3a6e;background:#e8edf5}.dark #bottom .act{color:#fff;background:#1c2b44}html{-webkit-text-size-adjust:100%}body{overflow-x:hidden}.btn{white-space:nowrap}
+#bottom{padding-bottom:calc(.375rem + env(safe-area-inset-bottom,0px))}
+@media(max-width:639px){
+ .inp{font-size:16px}                       /* cegah zoom otomatis iOS saat mengetik */
+ .btn{padding:.5rem .75rem}
+ #toasts{left:.75rem;right:.75rem;top:4rem}
+ #main{padding:.75rem .75rem calc(5.5rem + env(safe-area-inset-bottom,0px))}
+ #mbox{padding-bottom:calc(1.25rem + env(safe-area-inset-bottom,0px))}
+ #mbox .grid.grid-cols-2{grid-template-columns:1fr}#mbox .col-span-2{grid-column:1/-1}   /* form modal 1 kolom di HP */
+ /* tabel -> kartu bertumpuk agar tidak terpotong / perlu geser kanan-kiri */
+ .rtb,.rtb tbody{display:block;width:100%}.rtb thead{display:none}
+ .rtb tbody tr{display:block;border:1px solid rgba(100,116,139,.25);border-radius:.9rem;margin:.5rem;padding:.35rem .8rem}
+ .rtb td{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.3rem 0;text-align:right;white-space:normal!important;max-width:none!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere}
+ .rtb td::before{content:attr(data-label);font-size:.75rem;font-weight:600;color:#64748b;text-align:left;flex-shrink:0}
+ .rtb td[colspan]{display:block;text-align:center;font-weight:700}.rtb td[colspan]::before,.rtb td:empty{display:none}
+ .rtb td:empty{display:none}
+}
+html,body{max-width:100%}#main,#view,#view .tab,#view .tab>*,#view .grid>*{min-width:0}#main{overflow-x:clip}
+#view canvas{max-width:100%}
+#bottom{position:fixed;left:0;right:0;bottom:0;width:100%;z-index:30;transform:translateZ(0);overflow:hidden}
+#bottom .nv{flex:1 1 0;min-width:0;white-space:nowrap;padding:.25rem .1rem!important;font-size:10px!important}
+#bottom .nv i{font-size:1.05rem}
+#mbox h3:first-of-type{padding-bottom:.75rem;margin-bottom:1rem!important;border-bottom:1px solid rgba(100,116,139,.2);font-size:1.15rem}
+.btn-g{background:rgba(100,116,139,.15)}.btn-g:hover{background:rgba(100,116,139,.28)}
+.tab{animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.mod{animation:pop .2s ease}@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+th{font-weight:600;text-align:left;padding:.6rem .75rem;white-space:nowrap}td{padding:.55rem .75rem}th{position:sticky;top:0;z-index:1;background:#f1f5f9}.dark th{background:#1e293b}body,.glass,.inp{transition:background-color .3s,color .3s}@media(max-width:639px){.sheet{animation:up .25s ease}}@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+tbody tr{border-top:1px solid rgba(100,116,139,.18)}
+@media print{body.pm #app,body.pm #modal,body.pm #login,body.pm #toasts{display:none!important}body.pm #pv{display:block!important}.noprint{display:none!important}body{background:#fff!important;color:#000}.glass{box-shadow:none;background:#fff;color:#000}#main{margin:0!important;padding:0!important}}
+</style>
+</head>
+<body class="text-slate-800 dark:text-slate-200 min-h-screen">
+
+<!-- LOGIN -->
+<div id="login" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-br from-slate-700 via-slate-900 to-slate-950">
+  <div class="glass mod rounded-2xl p-7 w-full max-w-sm">
+    <div class="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-xl mb-4"><i class="fa-solid fa-wallet"></i></div>
+    <h1 class="text-xl font-extrabold">Kas Pemuda Bunter</h1>
+    <p class="text-sm text-slate-500 mb-5">Masuk untuk melihat atau mengelola kas.</p>
+    <label class="text-xs font-semibold">Username</label><input id="lu" class="inp mb-3" autocomplete="username">
+    <label class="text-xs font-semibold">Password</label><input id="lp" type="password" class="inp mb-4" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn btn-p w-full" onclick="doLogin()">Masuk</button>
+    <div class="mt-4 text-xs text-slate-500 space-y-1" id="demo">
+      <p class="font-semibold">Akun simulasi (klik untuk mengisi):</p>
+      <button class="underline block" onclick="fill('superadmin','admin123')">superadmin / admin123 — Super Admin</button>
+      <button class="underline block" onclick="fill('bendahara','admin123')">bendahara / admin123 — Admin</button>
+      <button class="underline block" onclick="fill('anggota','anggota123')">anggota / anggota123 — Anggota</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app" class="hidden">
+  <aside class="noprint hidden md:flex fixed inset-y-0 left-0 w-64 flex-col z-30" style="background:#0f1b2d;color:#cbd5e1">
+    <div class="flex items-center gap-3 p-5"><div class="w-11 h-11 rounded-xl text-white flex items-center justify-center text-lg" style="background:#f26a1b"><i class="fa-solid fa-wallet"></i></div><div class="leading-tight"><div class="font-extrabold text-white">Kas Pemuda Bunter</div><div class="text-xs text-slate-400">Sistem Kas &amp; Keuangan</div></div></div>
+    <nav id="side" class="flex-1 overflow-y-auto px-3 pb-3"></nav>
+    <div class="px-5 py-3 text-xs border-t border-white/10 flex items-center gap-2"><span id="sdot" class="w-2 h-2 rounded-full bg-emerald-400"></span><span id="sync"></span></div>
+  </aside>
+  <header class="noprint sticky top-0 z-20 md:ml-64 px-3 sm:px-4 py-2.5 sm:py-3 flex items-center gap-1.5 sm:gap-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+    <h1 id="pt" class="min-w-0 truncate text-base sm:text-xl font-extrabold">Dashboard</h1><div class="flex-1"></div>
+    <select id="yr" class="inp !w-auto !py-1.5 font-semibold" onchange="setYear(this.value)" title="Tahun aktif"></select>
+    <span id="net" class="hidden sm:inline"></span>
+    <span id="asw" class="hidden lg:flex items-center gap-2 text-sm text-slate-500">Lihat sebagai <select id="vas" class="inp !w-auto !py-1.5" onchange="viewAs(this.value)"></select></span>
+    <div id="av" class="hidden"></div><b id="un" class="hidden xl:block text-sm"></b><span id="ur" class="hidden sm:inline px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700"></span>
+    <button class="btn btn-o" onclick="syncNow(true)" title="Sinkronkan data sekarang"><i id="si" class="fa-solid fa-rotate"></i></button>
+    <button class="btn btn-o" onclick="toggleDark()" title="Mode gelap/terang"><i id="dm" class="fa-solid fa-moon"></i></button>
+    <button class="btn btn-o" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i><span class="hidden sm:inline"> Keluar</span></button>
+  </header>
+  <main id="main" class="md:ml-64 p-4 pb-24 md:pb-6"><div id="view"></div></main>
+  <nav id="bottom" class="noprint md:hidden fixed bottom-0 inset-x-0 glass z-30 flex justify-around py-1.5"></nav>
+</div>
+
+<div id="modal" class="fixed inset-0 z-40 hidden items-end sm:items-center justify-center sm:p-4 bg-slate-900/60" onclick="if(event.target===this)closeModal()">
+  <div id="mbox" class="relative glass mod sheet rounded-2xl rounded-b-none sm:rounded-b-3xl p-5 w-full max-w-lg max-h-[90vh] overflow-y-auto"></div>
+</div>
+<div id="pv" class="hidden" style="background:#fff;color:#000;padding:24px"></div>
+<div id="toasts" class="fixed top-16 right-3 z-50 space-y-2"></div>
+
+<script type="text/plain" id="gs-src">
+/** Code.gs — Backend Kas, Aset & Inventaris Pemuda Bunter (Google Sheets + Drive)
+ *  Jalankan fungsi setup() SEKALI dari editor Apps Script (aman diulang), lalu Deploy > Web app.
+ *  Sheet yang dibuat: Users, Transaksi, Tahun, Kategori, Pengaturan, Log, Aset. */
+const KAWAL='Kas awal kepemudaan',KBELI='Pengadaan/Pembelian Aset',KJUAL='Hasil Penjualan Aset';
+const CFG={SESSION_SEC:1800,DEFAULT_YEAR:2026,FOLDER:'Bukti Kas Pemuda Bunter',MAX_B64:4000000};
+const H={
+  Users:['username','nama','role','aktif','password'],
+  Transaksi:['id','tgl','jenis','kategori','nominal','pihak','ket','metode','tunai','bukti','status','voidAlasan','voidOleh','voidWaktu','dibuatOleh'],
+  Tahun:['tahun','ditutup'],
+  Kategori:['id','jenis','nama','anggaran'],
+  Pengaturan:['kunci','nilai'],
+  Log:['waktu','user','aksi'],
+  Aset:['id','nama','qty','satuan','harga','kategori','ket','dibuatOleh'],
+  Pengajuan:['id','tahun','kategori','keperluan','jumlah','tgl','metode','pihak','bukti','status','alasan','diajukanOleh','diputusOleh','trxId','waktu']};
+const ROLES=['superadmin','admin','ketua','anggota'],WR=['superadmin','admin'],SA=['superadmin'],APR=['ketua','superadmin']; // APR = penyetuju pengajuan dana (Ketua/Wakil Ketua dan Super Admin)
+const RLBL={superadmin:'Super Admin',admin:'Admin (Bendahara)',ketua:'Ketua / Wakil Ketua',anggota:'Anggota'};
+const DEMO={superadmin:'admin123',bendahara:'admin123',ketua:'ketua123',anggota:'anggota123'}; // akun bawaan setup()
+
+/* ===== SETUP SEKALI JALAN ===== */
+function setup(){
+  const ss=SpreadsheetApp.getActive();
+  Object.keys(H).forEach(n=>{
+    const s=ss.getSheetByName(n)||ss.insertSheet(n);
+    if(s.getLastRow()===0){s.getRange(1,1,1,H[n].length).setValues([H[n]]).setFontWeight('bold').setBackground('#1e3a6e').setFontColor('#ffffff');s.setFrozenRows(1);}
+  });
+  const t=sh('Transaksi');t.getRange('B:B').setNumberFormat('@');t.getRange('N:N').setNumberFormat('@');sh('Log').getRange('A:A').setNumberFormat('@');sh('Pengajuan').getRange('F:F').setNumberFormat('@');
+  const P=PropertiesService.getScriptProperties();if(!P.getProperty('SALT'))P.setProperty('SALT',Utilities.getUuid());
+  if(!rows('Users').length)[['superadmin','Super Admin','superadmin','admin123'],['ketua','Ketua Pemuda','ketua','ketua123'],['bendahara','Bendahara','admin','admin123'],['anggota','Anggota','anggota','anggota123']]
+    .forEach(u=>put('Users',{username:u[0],nama:u[1],role:u[2],aktif:true,password:hash(u[3])}));
+  if(!rows('Kategori').length)seedKategori();
+  if(!rows('Aset').length)seedAset();
+  if(!rows('Pengaturan').length)put('Pengaturan',{kunci:'tahunBuku',nilai:CFG.DEFAULT_YEAR});
+  Logger.log('Setup selesai. Ganti password bawaan, lalu isi saldo awal di Master Data > Setting Tahun Buku.');
+}
+
+function seedKategori(){
+  [['Masuk','Iuran anggota pemuda',0],['Masuk','Dana kegiatan kepemudaan',0],['Masuk','Dana kegiatan olahraga',0],['Masuk','Sumbangan / donasi',0],
+   ['Masuk','Dana kerja sama dengan pihak lain',0],['Masuk','Pendapatan kegiatan lainnya',0],['Masuk',KJUAL,0],
+   ['Keluar','Dana kegiatan kepemudaan',2000000],['Keluar','Dana kegiatan olahraga',1500000],['Keluar','Sumbangan / donasi',500000],
+   ['Keluar','Dana kerja sama dengan pihak lain',0],['Keluar','Dana pemeliharaan fasilitas',1000000],['Keluar',KBELI,0]]
+  .forEach(k=>put('Kategori',{id:nextId('Kategori'),jenis:k[0],nama:k[1],anggaran:k[2]}));
+}
+function seedAset(){
+  [['Kambing',4,'ekor',2500000,'Ternak'],['Sapi',1,'ekor',12000000,'Ternak'],['Kursi',50,'unit',85000,'Perabot'],['Jersey',2,'set',900000,'Perlengkapan Olahraga'],
+   ['Sarung tangan kiper',3,'pasang',250000,'Perlengkapan Olahraga'],['Peralatan olahraga',1,'set',1500000,'Perlengkapan Olahraga'],
+   ['Peralatan kegiatan',1,'set',2000000,'Perlengkapan Kegiatan'],['Inventaris lainnya',1,'set',500000,'Lainnya']]
+  .forEach(a=>put('Aset',{id:nextId('Aset'),nama:a[0],qty:a[1],satuan:a[2],harga:a[3],kategori:a[4],ket:'',dibuatOleh:'sistem'}));
+}
+/** Jalankan SEKALI jika sheet lama masih memakai kategori/istilah lama: ganti daftar kategori & ubah 'Saldo Awal' jadi 'Kas awal kepemudaan'. */
+function migrasi(){
+  inv();const k=sh('Kategori');if(k.getLastRow()>1)k.deleteRows(2,k.getLastRow()-1);seedKategori();
+  inv();const s=sh('Transaksi'),n=s.getLastRow();
+  if(n>1){const r=s.getRange(2,4,n-1,1);r.setValues(r.getValues().map(x=>[x[0]==='Saldo Awal'?KAWAL:x[0]]));}
+  Logger.log('Migrasi selesai. Transaksi lama dengan kategori lama perlu disesuaikan manual atau direset.');
+}
+
+/* ===== ENTRY POINT ===== */
+function doGet(){return json({ok:true,msg:'API Kas Pemuda Bunter aktif'});} // sengaja tanpa data
+const READ=['login','dashboard','master','bootstrap']; // aksi baca: tanpa kunci supaya tidak antre
+function doPost(e){
+  let lock=null,out;
+  try{
+    const p=JSON.parse(e.postData.contents);
+    if(READ.indexOf(p.action)<0){lock=LockService.getScriptLock();lock.waitLock(20000);} // hanya aksi tulis yang diserialkan
+    out=route(p);
+  }
+  catch(err){out={ok:false,msg:String(err.message||err)};}
+  finally{try{if(lock)lock.releaseLock();}catch(x){}}
+  return json(out);
+}
+const json=o=>ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+function route(p){
+  switch(p.action){
+    case 'login':return login(p);
+    case 'dashboard':return dashboard(p);
+    case 'bootstrap':return bootstrap(p);
+    case 'master':auth(p);return master();
+    case 'transaction':return transaction(p);
+    case 'pengajuan':return pengajuanOp(p);
+    case 'category':return category(p);
+    case 'settings':return settings(p);
+    case 'user':return userOp(p);
+    case 'aset':return asetOp(p);
+    case 'resetAll':return resetAll(p);
+    default:throw new Error('Aksi tidak dikenal');
+  }
+}
+
+/* ===== UTIL SHEET ===== */
+const _ready={};
+function sh(n){
+  const ss=SpreadsheetApp.getActive();
+  if(!ss)throw new Error('Script belum terhubung ke Google Sheets. Buat script lewat menu Extensions > Apps Script DI DALAM Spreadsheet.');
+  let s=ss.getSheetByName(n);
+  if(!s&&H[n])s=ss.insertSheet(n);
+  if(s&&H[n]&&!_ready[n]){ // pastikan header ada (sekali per eksekusi)
+    if(s.getLastRow()===0){s.getRange(1,1,1,H[n].length).setValues([H[n]]).setFontWeight('bold').setBackground('#1e3a6e').setFontColor('#ffffff');s.setFrozenRows(1);}
+    _ready[n]=true;
+  }
+  return s;
+}
+/** Dipanggil saat login: bila sheet/akun awal/kunci belum ada (setup belum dijalankan), siapkan otomatis. */
+function ensureInit(){
+  const ss=SpreadsheetApp.getActive();
+  if(!ss)throw new Error('Script belum terhubung ke Google Sheets. Buat script lewat menu Extensions > Apps Script DI DALAM Spreadsheet.');
+  const need=()=>!PropertiesService.getScriptProperties().getProperty('SALT')||Object.keys(H).some(n=>!ss.getSheetByName(n))||!rows('Users').length;
+  if(!need())return;
+  const L=LockService.getScriptLock();L.waitLock(20000);
+  try{inv();if(need())setup();}finally{L.releaseLock();}
+}
+const _rc={}; // cache isi sheet selama satu eksekusi (dibersihkan tiap ada penulisan)
+const inv=n=>{if(n)delete _rc[n];else Object.keys(_rc).forEach(k=>delete _rc[k]);};
+function rows(n){
+  let c=_rc[n];if(!c){const v=sh(n).getDataRange().getValues();c=_rc[n]={h:v.shift(),v};}
+  const v=c.v,h=c.h;
+  return v.map((r,i)=>{const o={_r:i+2};h.forEach((k,j)=>o[k]=r[j]);return o;}).filter(o=>H[n].some(k=>o[k]!==''));}
+const put=(n,o)=>{inv(n);sh(n).appendRow(H[n].map(k=>o[k]==null?'':o[k]));};
+const upd=(n,o)=>{inv(n);sh(n).getRange(o._r,1,1,H[n].length).setValues([H[n].map(k=>o[k]==null?'':o[k])]);};
+const ds=v=>v instanceof Date?Utilities.formatDate(v,Session.getScriptTimeZone(),'yyyy-MM-dd'):String(v==null?'':v);
+const bool=v=>v===true||String(v).toUpperCase()==='TRUE';
+const now=()=>Utilities.formatDate(new Date(),Session.getScriptTimeZone(),'dd/MM/yyyy HH:mm:ss');
+const rp=n=>'Rp '+String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const log=(u,a)=>sh('Log').appendRow([now(),u,a]);
+const nextId=n=>rows(n).reduce((m,r)=>Math.max(m,+r.id||0),0)+1;
+let _salt=null;const salt=()=>_salt||(_salt=PropertiesService.getScriptProperties().getProperty('SALT'));
+const hash=pw=>Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,salt()+pw));
+/** true selama akun masih memakai username + password bawaan demo */
+const isDemo=r=>DEMO[r.username]!==undefined&&r.password===hash(DEMO[r.username]);
+const isClosed=y=>rows('Tahun').some(r=>String(r.tahun)===String(y)&&bool(r.ditutup));
+function tx(o){return{id:+o.id,tgl:ds(o.tgl),jenis:o.jenis,kategori:o.kategori,nominal:+o.nominal,pihak:o.pihak,ket:o.ket,
+  metode:o.metode==='Transfer'?'Transfer':'Tunai',tunai:o.tunai===''?undefined:+o.tunai,bukti:o.bukti,status:o.status||'Aktif',
+  voidAlasan:o.voidAlasan,voidOleh:o.voidOleh,voidWaktu:ds(o.voidWaktu)};}
+function bal(y,ex){y=String(y);const b={Tunai:0,Transfer:0};
+  rows('Transaksi').map(tx).forEach(t=>{
+    if(t.status==='Void'||t.id===ex||t.tgl.slice(0,4)!==y)return;
+    if(t.kategori===KAWAL){const u=t.tunai!=null?t.tunai:(t.metode==='Tunai'?t.nominal:0);b.Tunai+=u;b.Transfer+=t.nominal-u;}
+    else b[t.metode]+=(t.jenis==='Masuk'?t.nominal:-t.nominal);});
+  return b;}
+
+/* ===== AUTH & ROLE (SERVER-SIDE) ===== */
+function login(p){
+  ensureInit();
+  const C=CacheService.getScriptCache(),k='fail_'+String(p.username).toLowerCase();
+  if(+C.get(k)>=5)throw new Error('Terlalu banyak percobaan gagal. Coba lagi 10 menit lagi.');
+  const u=rows('Users').find(r=>String(r.username).toLowerCase()===String(p.username).toLowerCase());
+  if(!u||u.password!==hash(p.password||'')){C.put(k,String((+C.get(k)||0)+1),600);log(p.username||'?','Login gagal');return{ok:false,msg:'Username atau password salah'};}
+  if(!bool(u.aktif))return{ok:false,msg:'Akun dinonaktifkan'};
+  C.remove(k);const token=Utilities.getUuid()+Utilities.getUuid();C.put(token,sesVal(u),CFG.SESSION_SEC);log(u.username,'Login');
+  return{ok:true,user:{username:u.username,nama:u.nama,role:u.role,token}};
+}
+const sesVal=u=>u.username+'|'+String(u.password).slice(-16);
+/** Peran SELALU dibaca ulang dari sheet Users, bukan dari kiriman klien. */
+function auth(p,roles){
+  const C=CacheService.getScriptCache(),sv=C.get(p.token||'-');
+  if(!sv)throw new Error('Sesi berakhir, silakan login ulang');
+  const u=rows('Users').find(r=>sesVal(r)===sv); // username/password berubah atau user dihapus => sesi lama tidak berlaku
+  if(!u||!bool(u.aktif))throw new Error('Sesi berakhir, silakan login ulang');
+  if(roles&&roles.indexOf(u.role)<0)throw new Error('Akses ditolak: aksi ini hanya untuk '+roles.map(r=>RLBL[r]||r).join(' / ')+'. Peran Anda: '+(RLBL[u.role]||u.role));
+  C.put(p.token,sv,CFG.SESSION_SEC); // sesi geser (sliding)
+  return u;
+}
+
+/* ===== BACA DATA ===== */
+function dashboard(p){
+  const u=auth(p),sa=u.role==='superadmin',closed={};
+  rows('Tahun').forEach(r=>{if(bool(r.ditutup))closed[r.tahun]=true;});
+  return{ok:true,closed,
+    aset:rows('Aset').map(as),pengajuan:u.role==='anggota'?[]:rows('Pengajuan').map(pj),
+    trx:rows('Transaksi').map(tx).map(t=>{if(u.role==='anggota')t.bukti='';return t;}),
+    logs:sa?recentLogs(100):[],
+    users:sa?rows('Users').map(r=>({username:r.username,nama:r.nama,role:r.role,aktif:bool(r.aktif),demo:isDemo(r)})):[]};
+}
+function recentLogs(n){
+  const s=sh('Log'),l=s.getLastRow();if(l<2)return[];
+  const st=Math.max(2,l-n+1);
+  return s.getRange(st,1,l-st+1,3).getValues().reverse().filter(r=>r[0]!==''||r[1]!==''||r[2]!=='').map(r=>({waktu:ds(r[0]),user:r[1],aksi:r[2]}));
+}
+/** Dashboard + master dalam SATU permintaan (lebih cepat daripada dua panggilan terpisah). */
+function bootstrap(p){
+  const d=dashboard(p),m=master();
+  return Object.assign(d,{categories:m.categories,settings:m.settings});
+}
+function master(){
+  const s=rows('Pengaturan').find(r=>r.kunci==='tahunBuku');
+  return{ok:true,categories:rows('Kategori').map(r=>({id:+r.id,jenis:r.jenis,nama:r.nama,anggaran:+r.anggaran||0})),
+    settings:{tahunBuku:s?+s.nilai:CFG.DEFAULT_YEAR}};
+}
+
+/* ===== TRANSAKSI ===== */
+function transaction(p){
+  if(p.op==='closeYear')return closeYear(auth(p,SA),+p.year);
+  if(p.op==='void')return voidTx(auth(p,WR),p);
+  return saveTx(auth(p,WR),p.data||{});
+}
+function saveTx(u,d,auto){
+  const old=d.id?rows('Transaksi').find(r=>+r.id===+d.id):null,o=old?tx(old):null;
+  if(d.id&&!old)throw new Error('Transaksi tidak ditemukan');
+  if(o&&o.status==='Void')throw new Error('Transaksi yang sudah di-void tidak dapat diubah');
+  if(o&&o.kategori===KAWAL)throw new Error('Kas awal tidak dapat diubah');
+  if(o&&(o.kategori===KBELI||o.kategori===KJUAL))throw new Error('Transaksi otomatis dari modul Aset tidak dapat diedit, gunakan void');
+  const n={jenis:d.jenis,kategori:String(d.kategori||''),nominal:Math.round(+d.nominal),tgl:String(d.tgl||''),
+    pihak:String(d.pihak||'').trim().slice(0,100),ket:String(d.ket||'').trim().slice(0,200),metode:d.metode==='Transfer'?'Transfer':'Tunai'};
+  if(['Masuk','Keluar'].indexOf(n.jenis)<0)throw new Error('Jenis transaksi tidak valid');
+  if(!(n.nominal>0&&n.nominal<=1e11))throw new Error('Nominal tidak valid');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(n.tgl)||isNaN(new Date(n.tgl+'T00:00:00')))throw new Error('Format tanggal tidak valid');
+  if(!n.pihak)throw new Error('Sumber/penerima wajib diisi');
+  if(!rows('Kategori').some(c=>c.jenis===n.jenis&&c.nama===n.kategori))throw new Error('Kategori tidak valid');
+  if(!auto&&(n.kategori===KBELI||n.kategori===KJUAL))throw new Error('Kategori otomatis hanya dibuat dari modul Aset');
+  const y=n.tgl.slice(0,4);
+  if(isClosed(y))throw new Error('Tahun buku '+y+' sudah ditutup (terkunci)');
+  if(o&&o.tgl.slice(0,4)!==y)throw new Error('Tanggal tidak boleh dipindah ke tahun buku lain');
+  const b=bal(y,o?o.id:-1);   // saldo guard: saldo metode terkait tidak boleh negatif
+  if(b[n.metode]+(n.jenis==='Masuk'?n.nominal:-n.nominal)<0)throw new Error('Saldo '+n.metode+' tidak cukup. Tersedia '+rp(b[n.metode]));
+  if(o&&o.jenis==='Masuk'&&o.metode!==n.metode&&b[o.metode]<0)throw new Error('Mengubah metode akan membuat saldo '+o.metode+' negatif');
+  let bukti=o?o.bukti:(d.buktiUrl||'');if(d.buktiFile)bukti=saveFile(d.buktiFile,y);
+  const row=old?Object.assign({},old):{id:nextId('Transaksi'),status:'Aktif',dibuatOleh:u.username,tunai:''};
+  Object.assign(row,n,{bukti});
+  if(old){const df=['tgl','jenis','kategori','nominal','pihak','ket','metode'].filter(k=>String(o[k])!==String(n[k])).map(k=>k+': '+o[k]+' → '+n[k]);
+    upd('Transaksi',row);log(u.username,'Edit transaksi #'+row.id+(df.length?' ['+df.join('; ')+']':'')+(d.buktiFile?' [bukti diganti]':''));}
+  else{put('Transaksi',row);log(u.username,'Tambah transaksi #'+row.id+' '+n.jenis+' '+rp(n.nominal)+' ('+n.metode+')');}
+  return{ok:true};
+}
+function voidTx(u,p){
+  const r=rows('Transaksi').find(x=>+x.id===+p.id);if(!r)throw new Error('Transaksi tidak ditemukan');
+  const t=tx(r),y=t.tgl.slice(0,4),alasan=String(p.alasan||'').trim();
+  if(t.status==='Void')throw new Error('Transaksi sudah di-void');
+  if(t.kategori===KAWAL)throw new Error('Saldo Awal tidak dapat di-void');
+  if(isClosed(y))throw new Error('Tahun buku '+y+' sudah ditutup (terkunci)');
+  if(alasan.length<3)throw new Error('Alasan void wajib diisi');
+  if(t.jenis==='Masuk'&&bal(y,t.id)[t.metode]<0)throw new Error('Void ditolak: saldo '+t.metode+' akan menjadi negatif');
+  Object.assign(r,{status:'Void',voidAlasan:alasan.slice(0,200),voidOleh:u.username,voidWaktu:now()});
+  upd('Transaksi',r);log(u.username,'VOID transaksi #'+t.id+' ('+t.jenis+' '+rp(t.nominal)+', '+t.kategori+') alasan: '+alasan);
+  return{ok:true};
+}
+function closeYear(u,y){
+  if(!(y>=2000))throw new Error('Tahun tidak valid');
+  if(isClosed(y))throw new Error('Tahun buku '+y+' sudah ditutup');
+  const b=bal(y),ny=String(y+1);
+  const ex=rows('Transaksi').find(r=>ds(r.tgl).slice(0,4)===ny&&r.kategori===KAWAL&&r.status!=='Void');
+  const row={id:ex?+ex.id:nextId('Transaksi'),tgl:ny+'-01-01',jenis:'Masuk',kategori:KAWAL,nominal:b.Tunai+b.Transfer,pihak:'Saldo awal',
+    ket:'Saldo Awal Kas '+ny,metode:'Tunai',tunai:b.Tunai,bukti:'',status:'Aktif',dibuatOleh:u.username};
+  if(ex){row._r=ex._r;upd('Transaksi',row);}else put('Transaksi',row);
+  const th=rows('Tahun').find(r=>String(r.tahun)===String(y));
+  if(th){th.ditutup=true;upd('Tahun',th);}else put('Tahun',{tahun:y,ditutup:true});
+  log(u.username,'Tutup tahun buku '+y+' (saldo akhir '+rp(row.nominal)+')');
+  return{ok:true};
+}
+function saveFile(f,y){
+  const m=/^data:(image\/(?:jpeg|png|webp));base64,(.+)$/.exec(f.dataUrl||'');
+  if(!m||m[2].length>CFG.MAX_B64)throw new Error('File bukti tidak valid atau terlalu besar');
+  const P=PropertiesService.getScriptProperties();let fo;
+  try{fo=DriveApp.getFolderById(P.getProperty('FOLDER_ID'));}catch(e){fo=DriveApp.createFolder(CFG.FOLDER);P.setProperty('FOLDER_ID',fo.getId());}
+  const name=y+'_'+Date.now()+'.'+m[1].split('/')[1];
+  const file=fo.createFile(Utilities.newBlob(Utilities.base64Decode(m[2]),m[1],name));
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK,DriveApp.Permission.VIEW);
+  return file.getUrl();
+}
+
+/* ===== KATEGORI, SETTING, USER ===== */
+function category(p){
+  const u=auth(p,WR),C=rows('Kategori');
+  if(p.op==='delete'){
+    const c=C.find(r=>+r.id===+p.id);if(!c)throw new Error('Kategori tidak ditemukan');
+    if(c.nama===KBELI||c.nama===KJUAL)throw new Error('Kategori otomatis tidak dapat dihapus');
+    if(rows('Transaksi').some(t=>t.kategori===c.nama&&t.jenis===c.jenis))throw new Error('Kategori masih dipakai transaksi, tidak bisa dihapus');
+    if(rows('Pengajuan').some(a=>a.kategori===c.nama))throw new Error('Kategori masih punya data pengajuan dana, tidak bisa dihapus');
+    inv('Kategori');sh('Kategori').deleteRow(c._r);log(u.username,'Hapus kategori '+c.nama);return{ok:true};
+  }
+  const d=p.data||{},nama=String(d.nama||'').trim().slice(0,50),jenis=d.jenis;
+  if(!nama||['Masuk','Keluar'].indexOf(jenis)<0)throw new Error('Data kategori tidak valid');
+  if([KAWAL,KBELI,KJUAL].indexOf(nama)>=0)throw new Error('Nama kategori ini dicadangkan sistem');
+  const ang=jenis==='Keluar'?Math.max(0,Math.round(+d.anggaran||0)):0;
+  if(C.some(r=>r.jenis===jenis&&String(r.nama).toLowerCase()===nama.toLowerCase()&&+r.id!==+d.id))throw new Error('Kategori sudah ada');
+  if(d.id){
+    const c=C.find(r=>+r.id===+d.id);if(!c)throw new Error('Kategori tidak ditemukan');
+    if(c.nama===KBELI||c.nama===KJUAL)throw new Error('Kategori otomatis tidak dapat diubah');
+    if(c.nama!==nama||c.jenis!==jenis){
+      const used=rows('Transaksi').filter(t=>t.kategori===c.nama&&t.jenis===c.jenis);
+      if(c.jenis!==jenis&&used.length)throw new Error('Jenis tidak dapat diubah karena kategori sudah dipakai transaksi');
+      inv('Transaksi');used.forEach(t=>sh('Transaksi').getRange(t._r,4).setValue(nama));
+      inv('Pengajuan');rows('Pengajuan').filter(a=>a.kategori===c.nama).forEach(a=>{a.kategori=nama;upd('Pengajuan',a);});
+    }
+    Object.assign(c,{nama,jenis,anggaran:ang});upd('Kategori',c);log(u.username,'Edit kategori '+nama+' (anggaran '+rp(ang)+')');
+  }else{put('Kategori',{id:nextId('Kategori'),jenis,nama,anggaran:ang});log(u.username,'Tambah kategori '+nama);}
+  return{ok:true};
+}
+function settings(p){
+  const u=auth(p,WR),d=p.data||{},y=Math.round(+d.tahunBuku),ys=String(y);
+  if(!(y>=2000&&y<=2100))throw new Error('Tahun buku tidak valid');
+  if(d.awalTunai!=null||d.awalBank!=null){ // saldo awal manual: hanya tahun pertama & belum ditutup
+    const at=Math.round(+d.awalTunai||0),ab=Math.round(+d.awalBank||0);
+    if(at<0||ab<0||at+ab>1e11)throw new Error('Saldo awal tidak valid');
+    if(isClosed(y)||rows('Transaksi').some(t=>ds(t.tgl).slice(0,4)<ys))throw new Error('Saldo awal tahun ini otomatis dari saldo akhir tahun sebelumnya');
+    const ex=rows('Transaksi').find(t=>ds(t.tgl).slice(0,4)===ys&&t.kategori===KAWAL&&t.status!=='Void'),b=bal(y,ex?+ex.id:-1);
+    if(b.Tunai+at<0||b.Transfer+ab<0)throw new Error('Saldo awal terlalu kecil: saldo kas akan negatif');
+    const row={id:ex?+ex.id:nextId('Transaksi'),tgl:ys+'-01-01',jenis:'Masuk',kategori:KAWAL,nominal:at+ab,pihak:'Saldo awal',
+      ket:'Saldo Awal Kas '+ys,metode:'Tunai',tunai:at,bukti:'',status:'Aktif',dibuatOleh:u.username};
+    if(ex){row._r=ex._r;upd('Transaksi',row);}else put('Transaksi',row);
+    log(u.username,'Set saldo awal '+ys+': Tunai '+rp(at)+', Transfer '+rp(ab));
+  }
+  const r=rows('Pengaturan').find(x=>x.kunci==='tahunBuku');
+  if(r){r.nilai=y;upd('Pengaturan',r);}else put('Pengaturan',{kunci:'tahunBuku',nilai:y});
+  log(u.username,'Tahun buku aktif: '+y);return{ok:true};
+}
+function userOp(p){
+  const u=auth(p,SA),U=rows('Users'),low=s=>String(s).toLowerCase();
+  const lainSA=ex=>U.some(r=>r.role==='superadmin'&&bool(r.aktif)&&r.username!==ex.username);
+  if(p.op==='delete'){
+    const t=U.find(r=>r.username===String(p.username||'').trim());
+    if(!t)throw new Error('User tidak ditemukan');
+    if(t.username===u.username)throw new Error('Akun yang sedang Anda pakai tidak dapat dihapus');
+    if(t.role==='superadmin'&&bool(t.aktif)&&!lainSA(t))throw new Error('Minimal harus ada satu Super Admin aktif');
+    inv('Users');sh('Users').deleteRow(t._r);
+    log(u.username,'Hapus user '+t.username+' ('+t.role+')');return{ok:true};
+  }
+  const d=p.data||{},un=String(d.username||'').trim(),old=String(d.oldUsername||un).trim();
+  if(!/^[A-Za-z0-9_.-]{3,30}$/.test(un))throw new Error('Username 3-30 karakter (huruf, angka, . _ -)');
+  if(ROLES.indexOf(d.role)<0)throw new Error('Role tidak valid');
+  if(d.password&&String(d.password).length<4)throw new Error('Password minimal 4 karakter');
+  const aktif=d.aktif!==false,ex=U.find(r=>low(r.username)===low(old));
+  if(d.oldUsername&&!ex)throw new Error('User yang diedit tidak ditemukan');
+  if(ex){
+    if(U.some(r=>r.username!==ex.username&&low(r.username)===low(un)))throw new Error('Username sudah dipakai');
+    if(ex.role==='superadmin'&&(d.role!=='superadmin'||!aktif)&&!lainSA(ex))throw new Error('Minimal harus ada satu Super Admin aktif');
+    const info=[];
+    if(ex.username!==un)info.push('username: '+ex.username+' → '+un);
+    if(ex.role!==d.role)info.push('role: '+ex.role+' → '+d.role);
+    if(bool(ex.aktif)!==aktif)info.push(aktif?'diaktifkan':'dinonaktifkan');
+    if(d.password)info.push('password diganti');
+    Object.assign(ex,{username:un,nama:String(d.nama||ex.nama).slice(0,60),role:d.role,aktif});
+    if(d.password)ex.password=hash(d.password);
+    upd('Users',ex);
+    log(u.username,'Edit user '+un+(info.length?' ['+info.join('; ')+']':''));
+  }else{
+    if(!d.password)throw new Error('Password awal wajib diisi (minimal 4 karakter)');
+    put('Users',{username:un,nama:String(d.nama||un).slice(0,60),role:d.role,aktif,password:hash(d.password)});
+    log(u.username,'Tambah user '+un+' ('+d.role+')');
+  }
+  return{ok:true};
+}
+
+/** Hapus semua transaksi, status tahun, dan log (untuk uji ulang). Hanya Super Admin. */
+function resetAll(p){
+  const u=auth(p,SA);
+  inv();['Transaksi','Tahun','Log','Aset','Pengajuan'].forEach(n=>{const s=sh(n),l=s.getLastRow();if(l>1)s.deleteRows(2,l-1);});
+  const r=rows('Pengaturan').find(x=>x.kunci==='tahunBuku');
+  if(r){r.nilai=CFG.DEFAULT_YEAR;upd('Pengaturan',r);}
+  seedAset();log(u.username,'RESET semua data transaksi (aset dikembalikan ke contoh awal)');
+  return{ok:true};
+}
+
+/* ===== ASET & INVENTARIS (terintegrasi dengan kas) ===== */
+const as=o=>({id:+o.id,nama:o.nama,qty:+o.qty,satuan:o.satuan,harga:+o.harga,kategori:o.kategori,ket:o.ket});
+function asetOp(p){
+  const u=auth(p,WR); // anggota hanya boleh membaca lewat dashboard
+  if(p.op==='delete'){const a=findAset(p.id);inv('Aset');sh('Aset').deleteRow(a._r);log(u.username,'Hapus aset #'+a.id+' '+a.nama);return{ok:true};}
+  if(p.op==='sell')return sellAset(u,p);
+  if(p.op==='addUnit')return addUnit(u,p);
+  return saveAset(u,p.data||{});
+}
+function findAset(id){const a=rows('Aset').find(r=>+r.id===+id);if(!a)throw new Error('Aset tidak ditemukan');return a;}
+function cleanAset(d){
+  const n={nama:String(d.nama||'').trim().slice(0,80),kategori:String(d.kategori||'').trim().slice(0,40),ket:String(d.ket||'').trim().slice(0,200),
+    satuan:String(d.satuan||'unit').trim().slice(0,15),qty:Math.round(+d.qty),harga:Math.round(+d.harga)};
+  if(!n.nama)throw new Error('Nama aset wajib diisi');
+  if(!(n.qty>=0&&n.qty<=1e6)||!(n.harga>=0&&n.harga<=1e11))throw new Error('Jumlah atau harga tidak valid');
+  return n;
+}
+/** Catatan otomatis untuk aset yang berasal dari hadiah turnamen (tidak menyentuh kas). */
+function hadiahNote(x){
+  const t=String(x.turnamen||'').trim().slice(0,60),j=String(x.juara||'').trim().slice(0,30),tg=String(x.tglHadiah||'').trim();
+  if(!t)throw new Error('Nama turnamen / penyelenggara wajib diisi untuk aset hadiah');
+  if(!j)throw new Error('Peringkat (misal: Juara 1) wajib diisi untuk aset hadiah');
+  if(tg&&(!/^\d{4}-\d{2}-\d{2}$/.test(tg)||isNaN(new Date(tg+'T00:00:00'))))throw new Error('Tanggal hadiah tidak valid');
+  return 'Hadiah '+j+' — '+t+(tg?' ('+tg+')':'');
+}
+function gabungKet(lama,note){
+  let k=(String(lama||'').trim()?String(lama).trim()+' · ':'')+note;
+  while(k.length>200&&k.indexOf(' · ')>=0)k=k.slice(k.indexOf(' · ')+3); // buang catatan terlama bila kepanjangan
+  return k.slice(0,200);
+}
+function saveAset(u,d){
+  const n=cleanAset(d);
+  if(d.id){const a=findAset(d.id);Object.assign(a,n);upd('Aset',a);log(u.username,'Edit aset #'+a.id+' '+n.nama);return{ok:true};}
+  if(n.qty<1)throw new Error('Jumlah harus lebih dari 0');
+  const hd=d.sumber==='hadiah'?hadiahNote(d):'';
+  if(hd)n.ket=gabungKet(n.ket,hd);
+  if(d.sumber==='kas') // potong kas: validasi tahun terkunci + saldo guard dijalankan oleh saveTx
+    saveTx(u,{jenis:'Keluar',kategori:KBELI,nominal:n.qty*n.harga,tgl:d.tgl,pihak:d.pihak||'Pengadaan aset',metode:d.metode,buktiFile:d.buktiFile,
+      ket:'Beli aset: '+n.nama+' '+n.qty+' '+n.satuan+' @ '+rp(n.harga)},true);
+  put('Aset',Object.assign({id:nextId('Aset'),dibuatOleh:u.username},n));
+  log(u.username,'Tambah aset '+n.nama+' '+n.qty+' '+n.satuan+' ('+(d.sumber==='kas'?'beli kas':d.sumber==='donasi'?'donasi':hd?hd:'aset awal')+')');
+  return{ok:true};
+}
+function addUnit(u,p){
+  const a=findAset(p.id),q=Math.round(+p.qty),h=Math.round(+p.harga);
+  if(!(q>=1&&q<=1e6)||!(h>=0&&h<=1e11))throw new Error('Jumlah atau harga tidak valid');
+  if(p.sumber==='kas')
+    saveTx(u,{jenis:'Keluar',kategori:KBELI,nominal:q*h,tgl:p.tgl,pihak:p.pihak||'Pengadaan aset',metode:p.metode,buktiFile:p.buktiFile,
+      ket:'Tambah unit aset: '+a.nama+' '+q+' '+a.satuan+' @ '+rp(h)},true);
+  const hd=p.sumber==='hadiah'?hadiahNote(p):'';
+  if(hd)a.ket=gabungKet(a.ket,hd);
+  const nq=+a.qty+q;a.harga=Math.round((+a.qty*+a.harga+q*h)/nq);a.qty=nq;upd('Aset',a);
+  log(u.username,'Tambah unit aset '+a.nama+' +'+q+' ('+(p.sumber==='kas'?'beli kas':p.sumber==='donasi'?'donasi':hd?hd:'penyesuaian')+')');
+  return{ok:true};
+}
+function sellAset(u,p){
+  const a=findAset(p.id),q=Math.round(+p.qty),h=Math.round(+p.hargaJual);
+  if(!(q>=1&&q<=+a.qty))throw new Error('Jumlah jual melebihi stok ('+a.qty+')');
+  if(!(h>0&&h<=1e11))throw new Error('Harga jual tidak valid');
+  saveTx(u,{jenis:'Masuk',kategori:KJUAL,nominal:q*h,tgl:p.tgl,pihak:String(p.pembeli||'Pembeli'),metode:p.metode,
+    ket:'Jual aset: '+a.nama+' '+q+' '+a.satuan+' @ '+rp(h)},true);
+  a.qty=+a.qty-q;upd('Aset',a);log(u.username,'Jual aset '+a.nama+' '+q+' '+a.satuan+' = '+rp(q*h));
+  return{ok:true};
+}
+
+/* ===== PENGAJUAN DANA: Bendahara mengajukan -> Ketua/Wakil Ketua approve -> kas OTOMATIS terpotong =====
+ * Jumlah berbeda / ditolak? Bendahara mengedit lalu mengajukan lagi. Kas hanya terpotong saat approve (saldo guard & tahun terkunci berlaku).
+ * Status: Diajukan -> Disetujui (transaksi Keluar tercatat) | Ditolak (bisa diedit & diajukan ulang) | Batal. Approve: Ketua/Wakil Ketua & Super Admin. */
+const pj=o=>({id:+o.id,tahun:String(o.tahun),kategori:o.kategori,keperluan:o.keperluan,jumlah:+o.jumlah||0,tgl:ds(o.tgl),metode:o.metode,pihak:o.pihak,
+  bukti:o.bukti,status:o.status,alasan:o.alasan,diajukanOleh:o.diajukanOleh,diputusOleh:o.diputusOleh,trxId:o.trxId===''?null:+o.trxId,waktu:ds(o.waktu)});
+function pengajuanOp(p){
+  const dec=p.op==='approve'||p.op==='reject',u=auth(p,dec?APR:WR),alasan=String(p.alasan||'').trim().slice(0,200);
+  let r=null;
+  if(p.op!=='save'||p.id){r=rows('Pengajuan').find(x=>+x.id===+p.id);if(!r)throw new Error('Pengajuan tidak ditemukan');}
+  const buka=y=>{if(isClosed(y))throw new Error('Tahun buku '+y+' sudah ditutup (terkunci)');};
+  const simpan=(st,extra,msg)=>{Object.assign(r,{status:st},extra);upd('Pengajuan',r);log(u.username,msg);return{ok:true};};
+  if(p.op==='save'){
+    const d=p.data||{},k=String(d.kategori||''),j=Math.round(+d.jumlah),kep=String(d.keperluan||'').trim().slice(0,150),tgl=String(d.tgl||''),metode=d.metode==='Transfer'?'Transfer':'Tunai';
+    if(k===KBELI||!rows('Kategori').some(c=>c.jenis==='Keluar'&&c.nama===k))throw new Error('Kategori pengeluaran tidak valid');
+    if(!kep)throw new Error('Keperluan wajib diisi');
+    if(!(j>0&&j<=1e11))throw new Error('Jumlah tidak valid');
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(tgl)||isNaN(new Date(tgl+'T00:00:00')))throw new Error('Format tanggal tidak valid');
+    const y=tgl.slice(0,4);buka(y);
+    if(r&&r.status!=='Diajukan'&&r.status!=='Ditolak')throw new Error('Hanya pengajuan berstatus Diajukan atau Ditolak yang dapat diubah');
+    const sd=bal(y)[metode];if(sd<j)throw new Error('Saldo '+metode+' tidak cukup. Tersedia '+rp(sd));
+    const v={kategori:k,keperluan:kep,jumlah:j,tgl,metode,pihak:String(d.pihak||'').trim().slice(0,100),tahun:y,status:'Diajukan',alasan:''};
+    const bukti=d.buktiFile?saveFile(d.buktiFile,y):(r?r.bukti:'');
+    if(r){const ulang=r.status==='Ditolak';Object.assign(r,v,{bukti});upd('Pengajuan',r);log(u.username,(ulang?'Ajukan ULANG':'Ubah')+' pengajuan #'+r.id+' '+k+' '+rp(j));}
+    else{const id=nextId('Pengajuan');put('Pengajuan',Object.assign({id,bukti,diajukanOleh:u.username,diputusOleh:'',trxId:'',waktu:now()},v));log(u.username,'Ajukan dana #'+id+' '+k+' '+rp(j)+' — '+kep);}
+    return{ok:true};
+  }
+  if(p.op==='cancel'){
+    if(r.status!=='Diajukan'&&r.status!=='Ditolak')throw new Error('Pengajuan ini tidak dapat dibatalkan');
+    if(alasan.length<3)throw new Error('Alasan pembatalan wajib diisi');
+    return simpan('Batal',{alasan:'Batal: '+alasan},'Batalkan pengajuan #'+r.id+' alasan: '+alasan);
+  }
+  if(dec){
+    if(r.status!=='Diajukan')throw new Error('Pengajuan sudah diputuskan atau tidak lagi menunggu');
+    if(p.op==='reject'){
+      if(alasan.length<3)throw new Error('Alasan penolakan wajib diisi');
+      return simpan('Ditolak',{alasan:'Ditolak: '+alasan,diputusOleh:u.username},'TOLAK pengajuan #'+r.id+' alasan: '+alasan);
+    }
+    const tid=nextId('Transaksi');
+    saveTx(u,{jenis:'Keluar',kategori:r.kategori,nominal:+r.jumlah,tgl:ds(r.tgl),pihak:String(r.pihak||'').trim()||r.keperluan,metode:r.metode,buktiUrl:r.bukti,
+      ket:'Pengajuan #'+r.id+' ('+r.diajukanOleh+'): '+r.keperluan}); // kas terpotong di sini; gagal bila saldo kurang / tahun terkunci
+    return simpan('Disetujui',{alasan:'',diputusOleh:u.username,trxId:tid},'SETUJUI pengajuan #'+r.id+' '+r.kategori+' '+rp(r.jumlah)+' → kas terpotong, transaksi #'+tid);
+  }
+  throw new Error('Operasi pengajuan tidak dikenal');
+}
+</script>
+<script>
+/* ===== KONFIGURASI =====
+   WAJIB untuk GitHub: ganti "URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA" di bawah dengan URL Web App (berakhiran /exec),
+   agar semua orang yang membuka link otomatis terhubung ke Google Sheets yang sama. */
+let SCRIPT_URL = (()=>{try{return localStorage.getItem("kasUrl");}catch(e){return null;}})() || "URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA";
+const MOCK = SCRIPT_URL.indexOf("URL_") === 0;
+const KAWAL="Kas awal kepemudaan",KBELI="Pengadaan/Pembelian Aset",KJUAL="Hasil Penjualan Aset";
+const BLN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const RHAK={superadmin:"Akses penuh: semua menu, kelola user, input transaksi, mengajukan DAN menyetujui pengajuan dana, tutup tahun, backup.",admin:"Bendahara: input transaksi, aset, master data, dan mengajukan dana. Tidak bisa menyetujui pengajuan.",ketua:"Ketua / Wakil Ketua: melihat semua data dan menyetujui atau menolak pengajuan dana. Tidak input transaksi.",anggota:"Hanya melihat dashboard, rekap mutasi, aset, dan laporan."};
+const ROLE = {superadmin:"Super Admin", admin:"Admin (Bendahara)", ketua:"Ketua / Wakil Ketua", anggota:"Anggota"};
+const katList=j=>S.cats.filter(c=>c.jenis===j&&c.nama!==KBELI&&c.nama!==KJUAL).map(c=>c.nama);
+
+/* ===== MOCK DATABASE (dipakai saat SCRIPT_URL belum diisi) ===== */
+const pad=n=>String(n).padStart(2,"0");
+const DEFAULT_YEAR=2026;
+const mt=t=>t&&t.metode==="Transfer"?"Transfer":"Tunai";
+const tunaiAwal=t=>t.tunai!=null?+t.tunai:(mt(t)==="Tunai"?t.nominal:0);
+const MLBL={Tunai:"Tunai (Cash)",Transfer:"Transfer Bank / QRIS"};
+const fmtD=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const NOW=new Date(),NY=NOW.getFullYear();
+const DB={users:[
+  {username:"superadmin",nama:"Super Admin",role:"superadmin",aktif:true,password:"admin123"},
+  {username:"ketua",nama:"Ketua Pemuda",role:"ketua",aktif:true,password:"ketua123"},
+  {username:"bendahara",nama:"Dewi Lestari",role:"admin",aktif:true,password:"admin123"},
+  {username:"anggota",nama:"Rizky Pratama",role:"anggota",aktif:true,password:"anggota123"}],
+  trx:[],logs:[],closed:{},pengajuan:[],
+  categories:[[1,"Masuk","Iuran anggota pemuda",0],[2,"Masuk","Dana kegiatan kepemudaan",0],[3,"Masuk","Dana kegiatan olahraga",0],[4,"Masuk","Sumbangan / donasi",0],[5,"Masuk","Dana kerja sama dengan pihak lain",0],[6,"Masuk","Pendapatan kegiatan lainnya",0],[7,"Masuk",KJUAL,0],
+    [8,"Keluar","Dana kegiatan kepemudaan",2000000],[9,"Keluar","Dana kegiatan olahraga",1500000],[10,"Keluar","Sumbangan / donasi",500000],[11,"Keluar","Dana kerja sama dengan pihak lain",0],[12,"Keluar","Dana pemeliharaan fasilitas",1000000],[13,"Keluar",KBELI,0]]
+    .map(c=>({id:c[0],jenis:c[1],nama:c[2],anggaran:c[3]})),
+  settings:{tahunBuku:DEFAULT_YEAR}};
+function addT(tgl,jenis,kategori,nominal,pihak,ket,metode,tunai){const o={id:Math.max(0,...DB.trx.map(t=>t.id))+1,tgl,jenis,kategori,nominal,pihak,ket,metode:metode==="Transfer"?"Transfer":"Tunai",bukti:""};if(tunai!=null)o.tunai=tunai;DB.trx.push(o);}
+function splitMock(y){y=String(y);let tn=0,bk=0;
+  DB.trx.filter(t=>t.tgl.startsWith(y)).forEach(t=>{
+    if(t.kategori===KAWAL){const u=tunaiAwal(t);tn+=u;bk+=t.nominal-u;}
+    else{const v=t.jenis==="Masuk"?t.nominal:-t.nominal;if(mt(t)==="Tunai")tn+=v;else bk+=v;}});
+  return{tunai:tn,total:tn+bk};}
+function closeYear(y){
+  const sp=splitMock(y);
+  DB.trx=DB.trx.filter(t=>!(t.kategori===KAWAL&&t.tgl.startsWith(String(y+1))));
+  DB.closed[y]=true;addT((y+1)+"-01-01","Masuk",KAWAL,sp.total,"Saldo awal","Saldo Awal Kas "+(y+1),"Tunai",sp.tunai);
+}
+(function seed(){
+  /* Simulasi mulai di 2026. Saldo awal dibuat MANUAL (Tunai 1 jt + Transfer 2 jt = sesuai kas saat ini).
+     Setelah Tutup Tahun Buku 2026, kas awal 2027 terbentuk otomatis dari saldo akhir 2026. */
+  addT("2026-01-01","Masuk",KAWAL,3000000,"Saldo awal","Saldo Awal Kas 2026","Tunai",1000000);
+  addT("2026-03-05","Masuk","Iuran anggota pemuda",2400000,"Anggota","Iuran triwulan I","Tunai");
+  addT("2026-04-15","Keluar","Dana kegiatan kepemudaan",1500000,"Vendor lokal","Konsumsi kegiatan","Tunai");
+  addT("2026-06-10","Masuk","Sumbangan / donasi",1500000,"Donatur","Donasi kegiatan","Transfer");
+  addT("2026-07-20","Keluar","Dana kegiatan olahraga",1800000,"Panitia","Kegiatan Agustusan","Transfer");
+  addT("2026-09-05","Masuk","Iuran anggota pemuda",2100000,"Anggota","Iuran triwulan III","Transfer");
+  addT("2026-10-10","Keluar","Dana pemeliharaan fasilitas",700000,"Toko ATK","Perawatan fasilitas","Tunai");
+})();
+/* Data awal aset (sama dengan seedAset di Code.gs) */
+function seedAsetMock(){DB.aset=[["Kambing",4,"ekor",2500000,"Ternak"],["Sapi",1,"ekor",12000000,"Ternak"],["Kursi",50,"unit",85000,"Perabot"],["Jersey",2,"set",900000,"Perlengkapan Olahraga"],["Sarung tangan kiper",3,"pasang",250000,"Perlengkapan Olahraga"],["Peralatan olahraga",1,"set",1500000,"Perlengkapan Olahraga"],["Peralatan kegiatan",1,"set",2000000,"Perlengkapan Kegiatan"],["Inventaris lainnya",1,"set",500000,"Lainnya"]]
+  .map((a,i)=>({id:i+1,nama:a[0],qty:a[1],satuan:a[2],harga:a[3],kategori:a[4],ket:""}));}
+seedAsetMock();
+
+function hadiahNote(x){
+  const t=String(x.turnamen||"").trim().slice(0,60),j=String(x.juara||"").trim().slice(0,30),tg=String(x.tglHadiah||"").trim();
+  if(!t)throw new Error("Nama turnamen / penyelenggara wajib diisi untuk aset hadiah");
+  if(!j)throw new Error("Peringkat (misal: Juara 1) wajib diisi untuk aset hadiah");
+  if(tg&&(!/^\d{4}-\d{2}-\d{2}$/.test(tg)||isNaN(new Date(tg+"T00:00:00"))))throw new Error("Tanggal hadiah tidak valid");
+  return "Hadiah "+j+" — "+t+(tg?" ("+tg+")":"");}
+function gabungKet(lama,note){let k=(String(lama||"").trim()?String(lama).trim()+" · ":"")+note;
+  while(k.length>200&&k.indexOf(" · ")>=0)k=k.slice(k.indexOf(" · ")+3);return k.slice(0,200);}
+function mockLog(user,aksi){DB.logs.unshift({waktu:new Date().toLocaleString("id-ID"),user,aksi});}
+function mock(action,p){
+  const u=DB.users;
+  if(action==="login"){const x=u.find(a=>a.username===p.username&&a.password===p.password);
+    if(!x)return{ok:false,msg:"Username atau password salah"};
+    if(!x.aktif)return{ok:false,msg:"Akun dinonaktifkan"};
+    mockLog(x.username,"Login");return{ok:true,user:{username:x.username,nama:x.nama,role:x.role}};}
+  if(action==="bootstrap"){const d=mock("dashboard",p),m=mock("master",p);return{...d,categories:m.categories,settings:m.settings};}
+  if(action==="dashboard")return{ok:true,closed:DB.closed,aset:DB.aset,trx:DB.trx,pengajuan:DB.pengajuan,logs:DB.logs,users:u.map(a=>({...a,password:undefined,demo:!!DEMO_PW[a.username]&&a.password===DEMO_PW[a.username]}))};
+  if(action==="transaction"){
+    const lk=y=>!!DB.closed[String(y)],MSG=y=>"Tahun buku "+y+" sudah ditutup (terkunci). Transaksi tidak dapat ditambah, diubah, atau dihapus.";
+    if(p.op==="closeYear"){if(lk(p.year))return{ok:false,msg:"Tahun buku "+p.year+" sudah ditutup"};closeYear(p.year);mockLog(p.by,"Tutup tahun buku "+p.year);}
+    else if(p.op==="void"){const x=DB.trx.find(t=>t.id===p.id);if(x&&lk(x.tgl.slice(0,4)))return{ok:false,msg:MSG(x.tgl.slice(0,4))};
+      if(!p.alasan||p.alasan.length<3)return{ok:false,msg:"Alasan void wajib diisi"};
+      Object.assign(x,{status:"Void",voidAlasan:p.alasan,voidOleh:p.by,voidWaktu:new Date().toLocaleString("id-ID")});mockLog(p.by,"VOID transaksi #"+p.id+" alasan: "+p.alasan);}
+    else if(p.op==="status"){DB.trx.find(t=>t.id===p.id).status=p.status;mockLog(p.by,p.status+" pengeluaran #"+p.id);}
+    else{const d=p.data;
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(d.tgl||"")||isNaN(new Date(d.tgl+"T00:00:00")))return{ok:false,msg:"Format tanggal tidak valid"};
+      if(lk(d.tgl.slice(0,4)))return{ok:false,msg:MSG(d.tgl.slice(0,4))};
+      d.metode=d.metode==="Transfer"?"Transfer":"Tunai";
+      if(d.buktiFile){d.bukti=d.buktiFile.dataUrl;}delete d.buktiFile;
+      if(d.id){const x=DB.trx.find(t=>t.id===d.id);if(x&&lk(x.tgl.slice(0,4)))return{ok:false,msg:MSG(x.tgl.slice(0,4))};const df=["tgl","jenis","kategori","nominal","pihak","ket","metode"].filter(k=>String(x[k])!==String(d[k])).map(k=>k+": "+x[k]+" → "+d[k]);
+        Object.assign(x,d);mockLog(p.by,"Edit transaksi #"+d.id+(df.length?" ["+df.join("; ")+"]":""));}
+      else{d.id=Math.max(0,...DB.trx.map(t=>t.id))+1;DB.trx.push(d);mockLog(p.by,"Tambah transaksi "+d.jenis+" "+d.nominal+" ("+d.metode+")");}}
+    return{ok:true};}
+  if(action==="aset"){
+    const E=m=>({ok:false,msg:m}),lk=y=>!!DB.closed[String(y)],A=id=>DB.aset.find(x=>x.id===id);
+    const avail=(y,m)=>{let v=0;DB.trx.forEach(t=>{if(t.status==="Void"||!t.tgl.startsWith(String(y)))return;if(t.kategori===KAWAL){const u=tunaiAwal(t);v+=m==="Tunai"?u:t.nominal-u;}else if(mt(t)===m)v+=t.jenis==="Masuk"?t.nominal:-t.nominal;});return v;};
+    const cash=(jenis,kat,nominal,tgl,pihak,ket,metode,bf)=>{ // mengembalikan pesan error, atau null bila sukses
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(tgl||""))return "Format tanggal tidak valid";
+      if(lk(tgl.slice(0,4)))return "Tahun buku "+tgl.slice(0,4)+" sudah ditutup (terkunci)";
+      metode=metode==="Transfer"?"Transfer":"Tunai";const av=avail(tgl.slice(0,4),metode);
+      if(jenis==="Keluar"&&av<nominal)return "Saldo "+metode+" tidak cukup. Tersedia "+rp(av);
+      DB.trx.push({id:Math.max(0,...DB.trx.map(t=>t.id))+1,tgl,jenis,kategori:kat,nominal,pihak,ket,metode,bukti:bf?bf.dataUrl:"",status:"Aktif"});return null;};
+    if(p.op==="delete"){const a=A(p.id);if(!a)return E("Aset tidak ditemukan");DB.aset=DB.aset.filter(x=>x.id!==p.id);mockLog(p.by,"Hapus aset #"+a.id+" "+a.nama);return{ok:true};}
+    if(p.op==="sell"){const a=A(p.id),q=Math.round(+p.qty),h=Math.round(+p.hargaJual);if(!a)return E("Aset tidak ditemukan");
+      if(!(q>=1&&q<=a.qty))return E("Jumlah jual melebihi stok ("+a.qty+")");if(!(h>0))return E("Harga jual tidak valid");
+      const e=cash("Masuk",KJUAL,q*h,p.tgl,p.pembeli||"Pembeli","Jual aset: "+a.nama+" "+q+" "+a.satuan+" @ "+rp(h),p.metode);if(e)return E(e);
+      a.qty-=q;mockLog(p.by,"Jual aset "+a.nama+" "+q+" "+a.satuan+" = "+rp(q*h));return{ok:true};}
+    if(p.op==="addUnit"){const a=A(p.id),q=Math.round(+p.qty),h=Math.round(+p.harga);if(!a)return E("Aset tidak ditemukan");
+      if(!(q>=1)||!(h>=0))return E("Jumlah atau harga tidak valid");
+      if(p.sumber==="kas"){const e=cash("Keluar",KBELI,q*h,p.tgl,p.pihak||"Pengadaan aset","Tambah unit aset: "+a.nama+" "+q+" "+a.satuan+" @ "+rp(h),p.metode,p.buktiFile);if(e)return E(e);}
+      let hd="";if(p.sumber==="hadiah"){try{hd=hadiahNote(p);}catch(x){return E(x.message);}a.ket=gabungKet(a.ket,hd);}
+      const nq=a.qty+q;a.harga=Math.round((a.qty*a.harga+q*h)/nq);a.qty=nq;mockLog(p.by,"Tambah unit aset "+a.nama+" +"+q+" ("+(p.sumber==="kas"?"beli kas":p.sumber==="donasi"?"donasi":hd||"penyesuaian")+")");return{ok:true};}
+    const d=p.data||{},n={nama:String(d.nama||"").trim(),kategori:String(d.kategori||"").trim(),ket:String(d.ket||"").trim(),satuan:String(d.satuan||"unit").trim(),qty:Math.round(+d.qty),harga:Math.round(+d.harga)};
+    if(!n.nama)return E("Nama aset wajib diisi");if(!(n.qty>=0)||!(n.harga>=0))return E("Jumlah atau harga tidak valid");
+    if(d.id){const a=A(d.id);if(!a)return E("Aset tidak ditemukan");Object.assign(a,n);mockLog(p.by,"Edit aset #"+a.id+" "+n.nama);return{ok:true};}
+    if(n.qty<1)return E("Jumlah harus lebih dari 0");
+    let hd="";if(d.sumber==="hadiah"){try{hd=hadiahNote(d);}catch(x){return E(x.message);}n.ket=gabungKet(n.ket,hd);}
+    if(d.sumber==="kas"){const e=cash("Keluar",KBELI,n.qty*n.harga,d.tgl,d.pihak||"Pengadaan aset","Beli aset: "+n.nama+" "+n.qty+" "+n.satuan+" @ "+rp(n.harga),d.metode,d.buktiFile);if(e)return E(e);}
+    DB.aset.push({id:Math.max(0,...DB.aset.map(x=>x.id))+1,...n});
+    mockLog(p.by,"Tambah aset "+n.nama+" "+n.qty+" "+n.satuan+" ("+(d.sumber==="kas"?"beli kas":d.sumber==="donasi"?"donasi":hd||"aset awal")+")");return{ok:true};}
+  if(action==="pengajuan"){
+    const E=m=>({ok:false,msg:m}),me=u.find(a=>a.username===p.by)||{},dec=p.op==="approve"||p.op==="reject",al=String(p.alasan||"").trim();
+    if(!(dec?["ketua","superadmin"]:["superadmin","admin"]).includes(me.role))return E("Akses ditolak: "+(dec?"hanya Ketua / Wakil Ketua / Super Admin yang dapat menyetujui":"hanya Super Admin / Bendahara yang dapat mengajukan")+". Peran Anda: "+(ROLE[me.role]||me.role));
+    const r=p.id?DB.pengajuan.find(x=>x.id===p.id):null;if(p.id&&!r)return E("Pengajuan tidak ditemukan");
+    const avail=(y,m)=>{const sp=splitMock(y);return m==="Tunai"?sp.tunai:sp.total-sp.tunai;};
+    if(p.op==="save"){const d=p.data||{},j=Math.round(+d.jumlah),kep=String(d.keperluan||"").trim(),tgl=String(d.tgl||""),metode=d.metode==="Transfer"?"Transfer":"Tunai";
+      if(!kep)return E("Keperluan wajib diisi");if(!(j>0))return E("Jumlah tidak valid");if(!/^\d{4}-\d{2}-\d{2}$/.test(tgl))return E("Format tanggal tidak valid");
+      const y=tgl.slice(0,4);if(DB.closed[y])return E("Tahun buku "+y+" sudah ditutup (terkunci)");
+      if(r&&!["Diajukan","Ditolak"].includes(r.status))return E("Hanya pengajuan berstatus Diajukan atau Ditolak yang dapat diubah");
+      if(avail(y,metode)<j)return E("Saldo "+metode+" tidak cukup. Tersedia "+rp(avail(y,metode)));
+      const v={kategori:d.kategori,keperluan:kep,jumlah:j,tgl,metode,pihak:String(d.pihak||"").trim(),tahun:y,status:"Diajukan",alasan:""};if(d.buktiFile)v.bukti=d.buktiFile.dataUrl;
+      const ulang=r&&r.status==="Ditolak";
+      if(r)Object.assign(r,v);else DB.pengajuan.push({id:Math.max(0,...DB.pengajuan.map(x=>x.id))+1,diajukanOleh:p.by,bukti:"",...v});
+      mockLog(p.by,(ulang?"Ajukan ULANG":"Ajukan dana")+" "+d.kategori+" "+rp(j)+" — "+kep);return{ok:true};}
+    if(p.op==="cancel"){if(!["Diajukan","Ditolak"].includes(r.status))return E("Pengajuan ini tidak dapat dibatalkan");if(al.length<3)return E("Alasan pembatalan wajib diisi");Object.assign(r,{status:"Batal",alasan:"Batal: "+al});mockLog(p.by,"Batalkan pengajuan #"+r.id);return{ok:true};}
+    if(dec){if(r.status!=="Diajukan")return E("Pengajuan sudah diputuskan atau tidak lagi menunggu");
+      if(p.op==="reject"){if(al.length<3)return E("Alasan penolakan wajib diisi");Object.assign(r,{status:"Ditolak",alasan:"Ditolak: "+al,diputusOleh:p.by});mockLog(p.by,"TOLAK pengajuan #"+r.id);return{ok:true};}
+      if(DB.closed[r.tahun])return E("Tahun buku "+r.tahun+" sudah ditutup (terkunci)");
+      if(avail(r.tahun,r.metode)<r.jumlah)return E("Saldo "+r.metode+" tidak cukup. Tersedia "+rp(avail(r.tahun,r.metode)));
+      const tid=Math.max(0,...DB.trx.map(t=>t.id))+1;DB.trx.push({id:tid,tgl:r.tgl,jenis:"Keluar",kategori:r.kategori,nominal:r.jumlah,pihak:r.pihak||r.keperluan,ket:"Pengajuan #"+r.id+" ("+r.diajukanOleh+"): "+r.keperluan,metode:r.metode,bukti:r.bukti||"",status:"Aktif"});
+      Object.assign(r,{status:"Disetujui",alasan:"",diputusOleh:p.by,trxId:tid});mockLog(p.by,"SETUJUI pengajuan #"+r.id+" "+rp(r.jumlah)+" → kas terpotong, transaksi #"+tid);return{ok:true};}
+    return E("Operasi pengajuan tidak dikenal");}
+  if(action==="resetAll"){DB.trx=[];DB.closed={};DB.logs=[];DB.pengajuan=[];seedAsetMock();DB.settings.tahunBuku=DEFAULT_YEAR;mockLog("sistem","RESET semua data transaksi");return{ok:true};}
+  if(action==="master")return{ok:true,categories:DB.categories,settings:DB.settings};
+  if(action==="category"){
+    if(p.op==="delete"){const c=DB.categories.find(x=>x.id===p.id);
+      if(DB.trx.some(t=>t.kategori===c.nama&&t.jenis===c.jenis))return{ok:false,msg:"Kategori masih dipakai transaksi, tidak bisa dihapus"};
+      DB.categories=DB.categories.filter(x=>x.id!==p.id);mockLog(p.by,"Hapus kategori "+c.nama);}
+    else if(p.data.id){const c=DB.categories.find(x=>x.id===p.data.id);DB.trx.forEach(t=>{if(t.kategori===c.nama&&t.jenis===c.jenis)t.kategori=p.data.nama;});DB.pengajuan.forEach(a=>{if(a.kategori===c.nama)a.kategori=p.data.nama;});Object.assign(c,p.data);mockLog(p.by,"Edit kategori "+c.nama);}
+    else{if(DB.categories.some(x=>x.jenis===p.data.jenis&&x.nama.toLowerCase()===p.data.nama.toLowerCase()))return{ok:false,msg:"Kategori sudah ada"};
+      p.data.id=Math.max(0,...DB.categories.map(x=>x.id))+1;DB.categories.push(p.data);mockLog(p.by,"Tambah kategori "+p.data.nama);}
+    return{ok:true};}
+  if(action==="settings"){const d=p.data,y=String(d.tahunBuku);
+    if(d.awalTunai!=null){
+      if(DB.closed[y]||DB.trx.some(t=>t.tgl.slice(0,4)<y))return{ok:false,msg:"Saldo awal tahun ini otomatis dari saldo akhir tahun sebelumnya"};
+      DB.trx=DB.trx.filter(t=>!(t.kategori===KAWAL&&t.tgl.startsWith(y)));
+      const tot=d.awalTunai+d.awalBank;if(tot>0)addT(y+"-01-01","Masuk",KAWAL,tot,"Saldo awal","Saldo Awal Kas "+y,"Tunai",d.awalTunai);}
+    DB.settings.tahunBuku=d.tahunBuku;mockLog(p.by,"Ubah pengaturan tahun buku / saldo awal");return{ok:true};}
+  if(action==="user"){
+    if(p.op==="delete"){
+      const t=u.find(a=>a.username===p.username);if(!t)return{ok:false,msg:"User tidak ditemukan"};
+      if(t.username===p.by)return{ok:false,msg:"Akun yang sedang Anda pakai tidak dapat dihapus"};
+      DB.users=DB.users.filter(a=>a.username!==p.username);mockLog(p.by,"Hapus user "+p.username+" ("+t.role+")");return{ok:true};}
+    const d=p.data,old=d.oldUsername||d.username,x=u.find(a=>a.username===old);
+    if(d.oldUsername&&!x)return{ok:false,msg:"User yang diedit tidak ditemukan"};
+    if(u.some(a=>a!==x&&a.username.toLowerCase()===d.username.toLowerCase()))return{ok:false,msg:"Username sudah dipakai"};
+    if(x){
+      if(x.role==="superadmin"&&(d.role!=="superadmin"||!d.aktif)&&!u.some(a=>a!==x&&a.role==="superadmin"&&a.aktif))return{ok:false,msg:"Minimal harus ada satu Super Admin aktif"};
+      const {oldUsername,password,...rest}=d;Object.assign(x,rest);if(password)x.password=password;}
+    else u.push({...d,password:d.password||"123456"});
+    mockLog(p.by,(x?"Edit user ":"Tambah user ")+d.username+" ("+d.role+")");return{ok:true};}
+  return{ok:false,msg:"Aksi tidak dikenal"};
+}
+
+/* ===== LAPISAN API ===== */
+async function call(action,payload={}){
+  if(MOCK){await new Promise(r=>setTimeout(r,350));return mock(action,payload);}
+  const r=await fetch(SCRIPT_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,token:S.user&&S.user.token,...payload})});
+  const j=await r.json();if(j&&j.ok===false&&/Sesi berakhir/.test(j.msg||"")){logout();toast(j.msg,"warn");}
+  return j;
+}
+const apiLogin=(username,password)=>call("login",{username,password});
+const apiGetDashboard=()=>call("dashboard");
+const apiSaveTransaction=(data)=>call("transaction",data);
+const apiSaveUser=(userData)=>call("user",userData);
+/* Satu permintaan untuk dashboard + master (fallback ke dua panggilan bila Code.gs di server belum diperbarui) */
+async function apiGetAll(){
+  const r=await call("bootstrap");
+  if(r&&r.ok===false&&/Aksi tidak dikenal/.test(r.msg||"")){const [d,m]=await Promise.all([call("dashboard"),call("master")]);return{d,m};}
+  return{d:r,m:r};
+}
+const apiPengajuan=d=>call("pengajuan",d);
+const apiGetMaster=()=>call("master"),apiSaveCategory=d=>call("category",d),apiSaveSettings=d=>call("settings",d);
+
+/* ===== STATE & UTIL ===== */
+const S={user:null,tab:"dash",trx:[],logs:[],users:[],aset:[],pj:[],cats:[],set:{},mtab:"kategori",year:DEFAULT_YEAR,chart:null};
+const $=s=>document.querySelector(s);
+const rp=n=>"Rp "+Number(n||0).toLocaleString("id-ID");
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const isSA=()=>S.user.role==="superadmin", canEdit=()=>["superadmin","admin"].includes(S.user.role);
+function toast(m,t="ok"){const c={ok:"bg-emerald-600",err:"bg-rose-600",warn:"bg-amber-500"}[t];
+  const e=document.createElement("div");e.className="mod text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-lg "+c;e.textContent=m;
+  $("#toasts").appendChild(e);setTimeout(()=>e.remove(),3200);}
+function openModal(h){$("#mbox").style.maxWidth="";$("#mbox").innerHTML='<button class="absolute right-4 top-4 text-slate-400 z-10" onclick="closeModal()"><i class="fa-solid fa-xmark text-lg"></i></button>'+h;$("#modal").classList.replace("hidden","flex");}
+function closeModal(){$("#modal").classList.replace("flex","hidden");}
+function toggleDark(){const d=document.documentElement.classList.toggle("dark");try{localStorage.setItem("kasTheme",d?"dark":"light");}catch(e){}$("#dm").className="fa-solid "+(d?"fa-sun":"fa-moon");if(S.user&&S.tab==="dash")drawChart();}
+function netStat(){const o=navigator.onLine,e=$("#net");e.textContent=o?"● Online":"● Offline";e.className="text-xs font-semibold px-2 py-1 rounded-full "+(o?"bg-emerald-100 text-emerald-700":"bg-rose-100 text-rose-700");}
+const badge=(t,c)=>`<span class="px-2 py-0.5 rounded-full text-xs font-semibold ${c}">${t}</span>`;
+const mb=m=>m==="Transfer"?`<span class="px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300"><i class="fa-solid fa-building-columns mr-1"></i>Transfer</span>`:m==="Campuran"?`<span class="px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200"><i class="fa-solid fa-layer-group mr-1"></i>Campuran</span>`:`<span class="px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"><i class="fa-solid fa-money-bill-wave mr-1"></i>Tunai</span>`;
+const mbT=t=>{if(!isAwal(t))return mb(mt(t));const u=tunaiAwal(t);return mb(u>=t.nominal?"Tunai":u<=0?"Transfer":"Campuran");};
+const skeleton=()=>`<div class="animate-pulse space-y-4"><div class="grid grid-cols-2 lg:grid-cols-4 gap-3">${'<div class="h-24 rounded-2xl bg-slate-300/50 dark:bg-slate-700/50"></div>'.repeat(4)}</div><div class="h-64 rounded-2xl bg-slate-300/50 dark:bg-slate-700/50"></div></div>`;
+
+/* ===== AUTH ===== */
+function fill(u,p){$("#lu").value=u;$("#lp").value=p;}
+/* Petunjuk akun simulasi hanya tampil selama akun masih bawaan (username & password belum diubah) */
+const DEMO_PW={superadmin:"admin123",bendahara:"admin123",ketua:"ketua123",anggota:"anggota123"};
+function renderDemo(){const el=$("#demo");if(!MOCK){el.classList.add("hidden");return;}
+  const L=DB.users.filter(a=>a.aktif&&DEMO_PW[a.username]&&a.password===DEMO_PW[a.username]);
+  el.classList.toggle("hidden",!L.length);
+  el.innerHTML='<p class="font-semibold">Akun simulasi (klik untuk mengisi):</p>'+L.map(a=>`<button class="underline block" onclick="fill('${a.username}','${a.password}')">${a.username} / ${a.password} — ${ROLE[a.role]}</button>`).join("");}
+async function doLogin(){
+  try{const r=await apiLogin($("#lu").value.trim(),$("#lp").value);
+    if(!r.ok)return toast(r.msg||"Login gagal","err");
+    S.user=r.user;try{sessionStorage.setItem("kasUser",JSON.stringify(r.user));}catch(e){}
+    startApp();}catch(e){toast("Gagal terhubung ke server","err");}
+}
+function viewAs(un){const x=DB.users.find(a=>a.username===un);S.user={username:x.username,nama:x.nama,role:x.role};try{sessionStorage.setItem("kasUser",JSON.stringify(S.user));}catch(e){}startApp();}
+const IDLE_MIN=15;let lastAct=Date.now(),idleT=null,syncT=null;
+function touch(){lastAct=Date.now();}
+function startIdle(){touch();["mousemove","keydown","click","touchstart","scroll"].forEach(e=>window.addEventListener(e,touch,{passive:true}));clearInterval(idleT);
+  idleT=setInterval(()=>{if(!S.user)return;const left=IDLE_MIN*60000-(Date.now()-lastAct);
+    if(left<=0){logout();toast("Sesi berakhir karena tidak aktif "+IDLE_MIN+" menit","warn");}
+    else if(left<60000&&!S.warned){S.warned=1;toast("Sesi akan berakhir dalam 1 menit","warn");}
+    else if(left>=60000)S.warned=0;},10000);}
+function logout(){clearInterval(idleT);clearInterval(syncT);S.user=null;S.loaded=false;S.yInit=0;try{sessionStorage.removeItem("kasUser");}catch(e){}$("#app").classList.add("hidden");$("#login").classList.remove("hidden");$("#lp").value="";renderDemo();}
+const TABS=[["dash","Dashboard","fa-chart-pie",["superadmin","admin","ketua","anggota"]],["trx","Transaksi","fa-money-bill-transfer",["superadmin","admin","ketua","anggota"]],["aset","Aset & Inventaris","fa-boxes-stacked",["superadmin","admin","ketua","anggota"],"Aset"],["pengajuan","Pengajuan Dana","fa-hand-holding-dollar",["superadmin","admin","ketua"],"Ajuan"],["lap","Laporan","fa-file-lines",["superadmin","admin","ketua","anggota"]],["master","Master Data","fa-database",["superadmin","admin"]],["users","User & Log","fa-users-gear",["superadmin"]],["backup","Backup & Data","fa-cloud-arrow-up",["superadmin"]]];
+function startApp(){
+  $("#login").classList.add("hidden");$("#app").classList.remove("hidden");startIdle();clearInterval(syncT);syncT=setInterval(()=>{if(!document.hidden&&navigator.onLine)syncNow();},30000);
+  const u=S.user;$("#av").textContent=u.nama.split(" ").map(w=>w[0]).slice(0,2).join("");$("#un").textContent=u.nama;$("#ur").textContent=ROLE[u.role];
+  const t=TABS.filter(x=>x[3].includes(u.role));
+  const G={dash:"Utama",trx:"Transaksi",aset:"Transaksi",pengajuan:"Transaksi",lap:"Data",master:"Data",users:"Sistem",backup:"Sistem"};let lastG="";
+  $("#side").innerHTML=t.map(x=>{const h=G[x[0]]!==lastG?(lastG=G[x[0]],`<div class="text-xs font-semibold text-slate-500 px-3 pt-4 pb-1">${lastG}</div>`):"";return h+`<button data-t="${x[0]}" onclick="go('${x[0]}')" class="nv w-full text-left px-3 py-2.5 rounded-xl text-[15px] font-semibold flex items-center gap-3 text-slate-300 hover:bg-white/5"><i class="fa-solid ${x[2]} w-5 text-slate-400"></i>${x[1]}</button>`;}).join("");
+  $("#sync").textContent=MOCK?"Mode simulasi · data lokal":"Google Sheets · tersinkron";
+  if(!MOCK)$("#asw").style.display="none";else $("#vas").innerHTML=DB.users.map(a=>`<option value="${a.username}" ${a.username===u.username?"selected":""}>${esc(a.nama)} — ${ROLE[a.role]}</option>`).join("");
+  $("#bottom").innerHTML=t.map(x=>`<button data-t="${x[0]}" onclick="go('${x[0]}')" class="nv flex flex-col items-center gap-0.5 text-[10px] font-semibold rounded-xl"><i class="fa-solid ${x[2]} text-base"></i>${x[4]||({dash:"Beranda",master:"Master",users:"User",backup:"Backup"})[x[0]]||x[1]}</button>`).join("");
+  go("dash");
+}
+async function go(t){
+  const cached=S.loaded&&t!==S.tab; // pindah tab: tampilkan data yang ada dulu, perbarui di latar belakang
+  S.tab=t;document.querySelectorAll(".nv").forEach(b=>{const a=b.dataset.t===t;b.classList.toggle("act",a);});
+  $("#pt").textContent=(TABS.find(x=>x[0]===t)||[])[1];
+  if(cached){fillYears();({dash:vDash,trx:vTrx,aset:vAset,lap:vLap,pengajuan:vPengajuan,master:vMaster,users:vUsers,backup:vBackup})[t]();syncNow();return;}
+  $("#view").innerHTML=skeleton();
+  try{const {d,m}=await apiGetAll();
+    if(d.ok===false||m.ok===false)throw new Error(d.msg||m.msg);
+    S.all=d.trx;S.aset=d.aset||[];S.trx=d.trx.filter(t=>t.status!=="Void");S.closed=d.closed||{};S.logs=d.logs||[];S.users=d.users||[];S.pj=d.pengajuan||[];S.cats=m.categories;S.set=m.settings;S.sig=JSON.stringify([d.trx,d.aset||[],m.categories,m.settings,d.closed||{},d.users||[],d.pengajuan||[]]);S.lastSync=new Date();S.loaded=true;setSync("ok");if(!S.yInit){S.yInit=1;S.year=S.set.tahunBuku||S.year;}}
+  catch(e){setSync("err");toast("Gagal memuat data","err");}
+  fillYears();({dash:vDash,trx:vTrx,aset:vAset,lap:vLap,pengajuan:vPengajuan,master:vMaster,users:vUsers,backup:vBackup})[t]();
+}
+
+/* ===== DASHBOARD ===== */
+const Y=()=>String(S.year),locked=y=>!!S.closed[y],isAwal=t=>t.kategori===KAWAL;
+const yrTrx=()=>S.trx.filter(t=>t.tgl.startsWith(Y())),yrAll=()=>S.all.filter(t=>t.tgl.startsWith(Y()));
+const sum=(a,f)=>a.reduce((n,x)=>n+(f(x)?x.nominal:0),0);
+const inc=a=>sum(a,t=>t.jenis==="Masuk"&&!isAwal(t)),exp=a=>sum(a,t=>t.jenis==="Keluar");
+function awalSplit(y){y=String(y);const a=S.trx.find(t=>isAwal(t)&&t.tgl.startsWith(y));
+  if(a){const u=tunaiAwal(a);return{tunai:u,bank:a.nominal-u};}
+  if(S.trx.some(t=>t.tgl.slice(0,4)<y))return splitAkhir(String(y-1));
+  return{tunai:0,bank:0};}
+function splitAkhir(y){y=String(y);const s0=awalSplit(y);let tn=s0.tunai,bk=s0.bank;
+  S.trx.filter(t=>t.tgl.startsWith(y)&&!isAwal(t)).forEach(t=>{const v=t.jenis==="Masuk"?t.nominal:-t.nominal;if(mt(t)==="Tunai")tn+=v;else bk+=v;});
+  return{tunai:tn,bank:bk,total:tn+bk};}
+function saldoAwal(y){const s0=awalSplit(y);return s0.tunai+s0.bank;}
+function saldoAkhir(y){return splitAkhir(y).total;}
+function fillYears(){const ys=new Set(S.trx.map(t=>+t.tgl.slice(0,4)));ys.add(+(S.set&&S.set.tahunBuku)||DEFAULT_YEAR);ys.add(S.year);$("#yr").innerHTML=[...ys].sort((a,b)=>a-b).map(y=>`<option ${y===S.year?"selected":""}>${y}</option>`).join("");}
+function setYear(v){S.year=+v;go(S.tab);}
+const lockBadge=()=>locked(S.year)?badge("Tahun buku ditutup","bg-slate-300 text-slate-700"):"";
+function trxRow(t){const m=t.jenis==="Masuk";return `<div class="flex items-center gap-3 py-2"><div class="w-9 h-9 rounded-xl flex items-center justify-center ${m?"bg-emerald-100 text-emerald-600":"bg-rose-100 text-rose-600"}"><i class="fa-solid ${m?"fa-arrow-down":"fa-arrow-up"}"></i></div><div class="flex-1 min-w-0"><div class="text-sm font-semibold truncate">${esc(t.kategori)} — ${esc(t.pihak)}</div><div class="text-xs text-slate-500 flex items-center gap-1.5 flex-wrap">${t.tgl} ${mbT(t)}</div></div><div class="text-sm font-bold ${m?"text-emerald-600":"text-rose-600"}">${m?"+":"-"}${rp(t.nominal)}</div></div>`;}
+function vDash(){
+  const a=yrTrx(),y=Y(),ins=a.filter(t=>t.jenis==="Masuk"&&!isAwal(t)),outs=a.filter(t=>t.jenis==="Keluar"),sp=splitAkhir(y);
+  const cards=[["Saldo kas "+y,sp.total,"Saldo awal "+rp(saldoAwal(y)),"fa-wallet","bg-slate-200 text-slate-700"],["Pemasukan "+y,inc(a),ins.length+" transaksi masuk","fa-arrow-trend-up","bg-emerald-100 text-emerald-700"],["Pengeluaran "+y,exp(a),outs.length+" transaksi keluar","fa-arrow-trend-down","bg-rose-100 text-rose-700"]];
+  const last=a.filter(t=>!isAwal(t)).sort((p,q)=>q.tgl.localeCompare(p.tgl)||q.id-p.id).slice(0,5);
+  const cat={};ins.forEach(t=>cat[t.kategori]=(cat[t.kategori]||0)+t.nominal);const tot=inc(a)||1,ce=Object.entries(cat).sort((p,q)=>q[1]-p[1]);
+  const pc=v=>sp.total>0?Math.min(100,Math.max(0,Math.round(v/sp.total*100))):0,pt=pc(sp.tunai),pb=pc(sp.bank);
+  const rowM=[["Tunai (Cash)",sp.tunai,pt,"#10b981","fa-money-bill-wave","bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"],["Transfer Bank / QRIS",sp.bank,pb,"#0ea5e9","fa-building-columns","bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300"]];
+  $("#view").innerHTML=`<div class="tab space-y-4">
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">${cards.map(c=>`<div class="glass rounded-2xl p-4 flex items-center gap-4"><div class="w-14 h-14 shrink-0 rounded-2xl flex items-center justify-center text-xl ${c[4]}"><i class="fa-solid ${c[3]}"></i></div><div class="min-w-0"><div class="text-sm text-slate-500">${c[0]}</div><div class="text-xl sm:text-2xl font-extrabold">${rp(c[1])}</div><div class="text-xs text-slate-500">${c[2]}</div></div></div>`).join("")}</div>
+  <div class="grid lg:grid-cols-3 gap-4"><div class="glass rounded-2xl p-5 lg:col-span-2"><h3 class="font-extrabold text-lg">Arus kas bulanan</h3><p class="text-sm text-slate-500 mb-2">Pemasukan vs pengeluaran, tahun ${y} ${lockBadge()}</p><div class="h-64 relative min-w-0"><canvas id="ch"></canvas></div></div>
+  <div class="glass rounded-2xl p-5"><div class="flex items-center mb-1"><h3 class="font-extrabold text-lg flex-1">Mutasi terakhir</h3></div>${last.map(trxRow).join("")||'<p class="text-sm text-slate-500 py-4">Belum ada mutasi di tahun ini.</p>'}</div></div>
+  <div class="grid lg:grid-cols-3 gap-4"><div class="glass rounded-2xl p-5 lg:col-span-2"><h3 class="font-extrabold text-lg mb-3">Pemasukan per kategori</h3><div class="grid sm:grid-cols-2 gap-x-8">${ce.map(([k,v])=>`<div class="mb-3"><div class="flex justify-between text-sm"><b>${esc(k)}</b><span class="text-slate-500">${rp(v)} · ${Math.round(v/tot*100)}%</span></div><div class="h-2 rounded-full bg-slate-200 dark:bg-slate-700 mt-1"><div class="h-2 rounded-full" style="width:${Math.round(v/tot*100)}%;background:#1e3a6e"></div></div></div>`).join("")||'<p class="text-sm text-slate-500">Belum ada pemasukan di tahun ini.</p>'}</div></div>
+  <div class="glass rounded-2xl p-5"><h3 class="font-extrabold text-lg">Posisi saldo per metode</h3><p class="text-sm text-slate-500 mb-3">Estimasi saldo ${y} menurut metode tiap transaksi</p>
+    <div class="flex h-3 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 mb-4"><div style="width:${pt}%;background:#10b981"></div><div style="width:${pb}%;background:#0ea5e9"></div></div>
+    ${rowM.map(r=>`<div class="flex items-center gap-3 mb-3"><div class="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center ${r[5]}"><i class="fa-solid ${r[4]}"></i></div><div class="flex-1 min-w-0"><div class="text-sm font-semibold">${r[0]}</div><div class="text-xs text-slate-500">${r[2]}% dari total saldo</div></div><div class="text-sm font-extrabold ${r[1]<0?"text-rose-600":""}">${rp(r[1])}</div></div>`).join("")}
+    <div class="flex justify-between border-t border-slate-200/70 dark:border-slate-700 pt-2 text-sm"><span class="text-slate-500">Total saldo kas</span><b>${rp(sp.total)}</b></div>
+    ${sp.tunai<0||sp.bank<0?`<p class="text-xs text-amber-600 mt-2"><i class="fa-solid fa-triangle-exclamation"></i> Salah satu saldo bernilai negatif. Periksa kembali metode pembayaran pada transaksi.</p>`:""}</div></div></div>`;
+  $("#view").firstElementChild.insertAdjacentHTML("afterbegin",awalBanner()+wealthHtml());
+  drawChart();
+}
+function drawChart(){
+  const c=$("#ch");if(!c)return;if(S.chart)S.chart.destroy();
+  const a=yrTrx(),I=[],O=[];
+  for(let m=0;m<12;m++){const b=a.filter(t=>t.tgl.startsWith(Y()+"-"+pad(m+1)));I.push(inc(b));O.push(exp(b));}
+  const dk=document.documentElement.classList.contains("dark"),tc=dk?"#cbd5e1":"#475569";
+  S.chart=new Chart(c,{type:"bar",data:{labels:BLN.map(b=>b.slice(0,3)),datasets:[{label:"Pemasukan",data:I,backgroundColor:"#10b981",borderRadius:6},{label:"Pengeluaran",data:O,backgroundColor:"#f43f5e",borderRadius:6}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:tc}},tooltip:{callbacks:{label:x=>x.dataset.label+": "+rp(x.parsed.y)}}},scales:{x:{ticks:{color:tc},grid:{display:false}},y:{ticks:{color:tc,callback:v=>v/1000+"rb"},grid:{color:"rgba(100,116,139,.15)"}}}}});
+}
+
+/* ===== TRANSAKSI ===== */
+function vTrx(){
+  $("#view").innerHTML=`<div class="tab space-y-4"><div class="flex flex-wrap items-center gap-2"><h2 class="text-lg font-extrabold">${canEdit()?"Transaksi Kas":"Rekap Mutasi Kas"} ${Y()}</h2>${lockBadge()}<div class="flex-1"></div>${canEdit()?`<button class="btn btn-p" onclick="openTrx()"><i class="fa-solid fa-plus"></i> Input transaksi</button>`:""}</div>
+  <div class="glass rounded-2xl p-3 grid grid-cols-2 lg:grid-cols-4 gap-2">
+    <input type="date" id="fa" class="inp" oninput="drawTrx()" title="Dari tanggal"><input type="date" id="fb" class="inp" oninput="drawTrx()" title="Sampai tanggal">
+    <select id="fj" class="inp" onchange="drawTrx()"><option value="">Semua jenis</option><option>Masuk</option><option>Keluar</option></select>
+    <select id="fk" class="inp" onchange="drawTrx()"><option value="">Semua kategori</option>${[...new Set([...S.cats.map(c=>c.nama),KAWAL])].map(k=>`<option>${esc(k)}</option>`).join("")}</select>
+    <select id="fm" class="inp col-span-2 lg:col-span-1" onchange="drawTrx()"><option value="">Semua metode</option><option value="Tunai">Tunai (Cash)</option><option value="Transfer">Transfer Bank / QRIS</option></select>
+    <input id="fq" class="inp col-span-2" placeholder="Cari kata kunci…" oninput="drawTrx()">
+    <button class="btn btn-g col-span-2 lg:col-span-1" onclick="resetTrxFilter()" title="Kembalikan semua filter ke kondisi awal"><i class="fa-solid fa-rotate-left"></i> Reset Filter</button></div>
+  <div class="glass rounded-2xl overflow-auto max-h-[65vh]"><table class="w-full text-sm"><thead><tr><th>Tanggal</th><th>Jenis</th><th>Kategori</th><th>Pihak</th><th>Keterangan</th><th>Metode</th><th>Bukti</th><th>Nominal</th>${canEdit()?"<th>Aksi</th>":""}</tr></thead><tbody id="tb"></tbody></table></div></div>`;
+  drawTrx();
+}
+function resetTrxFilter(){["fa","fb","fj","fk","fm","fq"].forEach(i=>{const e=$("#"+i);if(e)e.value="";});drawTrx();toast("Filter direset");}
+function drawTrx(){
+  const a=$("#fa").value,b=$("#fb").value,j=$("#fj").value,k=$("#fk").value,m=$("#fm").value,q=$("#fq").value.toLowerCase();
+  const byM=t=>!m||(isAwal(t)?(m==="Tunai"?tunaiAwal(t)>0:t.nominal-tunaiAwal(t)>0):mt(t)===m);
+  const rows=yrAll().filter(t=>(!a||t.tgl>=a)&&(!b||t.tgl<=b)&&(!j||t.jenis===j)&&(!k||t.kategori===k)&&byM(t)&&(!q||(t.pihak+t.ket+t.kategori).toLowerCase().includes(q))).sort((x,y)=>y.tgl.localeCompare(x.tgl)||y.id-x.id);
+  $("#tb").innerHTML=rows.length?rows.map(t=>{const v=t.status==="Void",m2=t.jenis==="Masuk",ed=canEdit()&&!locked(S.year)&&!isAwal(t)&&!v;
+    return `<tr class="${v?"opacity-60":""}" ${v?`title="Void oleh ${esc(t.voidOleh)} (${esc(t.voidWaktu)}): ${esc(t.voidAlasan)}"`:""}><td class="whitespace-nowrap">${t.tgl}</td><td>${badge(t.jenis,m2?"bg-emerald-100 text-emerald-700":"bg-rose-100 text-rose-700")}</td><td>${esc(t.kategori)}</td><td>${esc(t.pihak)}</td><td class="max-w-[200px] truncate">${esc(t.ket)}${v?` <span class="text-xs text-rose-600">(alasan: ${esc(t.voidAlasan)})</span>`:""}</td><td>${v?badge("VOID","bg-slate-300 text-slate-700"):mbT(t)}</td><td>${t.bukti?`<button class="text-indigo-600" title="Lihat bukti" onclick="openBukti(${t.id})"><i class="fa-solid fa-paperclip"></i></button>`:"–"}</td><td class="font-bold whitespace-nowrap ${v?"line-through text-slate-500":m2?"text-emerald-600":"text-rose-600"}">${rp(t.nominal)}</td>${canEdit()?`<td class="whitespace-nowrap">${ed?`${isAuto(t)?"":`<button class="text-indigo-600 mr-3" title="Edit" onclick="openTrx(${t.id})"><i class="fa-solid fa-pen"></i></button>`}<button class="text-rose-600" title="Void (batalkan)" onclick="delTrx(${t.id})"><i class="fa-solid fa-ban"></i></button>`:""}</td>`:""}</tr>`;}).join(""):`<tr><td colspan="9" class="text-center py-8 text-slate-500">Belum ada transaksi yang cocok. Klik Reset Filter atau tambah transaksi baru.</td></tr>`;
+}
+const MSG_LOCK=y=>"Tahun buku "+y+" sudah ditutup (terkunci). Transaksi tidak dapat ditambah, diubah, atau dihapus.";
+let CUR=0;function openTrx(id){CUR=id||0;
+  if(!id&&locked(S.year))return toast(MSG_LOCK(S.year),"warn");
+  if(id){const o=S.trx.find(x=>x.id===id);if(o&&locked(o.tgl.slice(0,4)))return toast(MSG_LOCK(o.tgl.slice(0,4)),"warn");}
+  const td=fmtD(new Date());
+  const t=id?S.trx.find(x=>x.id===id):{jenis:"Masuk",kategori:"",nominal:"",tgl:td.slice(0,4)===Y()?td:Y()+"-01-01",pihak:"",ket:"",metode:"Tunai",bukti:""};
+  openModal(`<h3 class="font-extrabold mb-3">${id?"Edit":"Tambah"} Transaksi</h3><div class="grid grid-cols-2 gap-3">
+  <div><label class="text-xs font-semibold">Jenis</label><select id="f-j" class="inp" onchange="katOpt();chkSaldo()"><option ${t.jenis==="Masuk"?"selected":""}>Masuk</option><option ${t.jenis==="Keluar"?"selected":""}>Keluar</option></select></div>
+  <div><label class="text-xs font-semibold">Kategori</label><select id="f-k" class="inp"></select></div>
+  <div><label class="text-xs font-semibold">Nominal (Rp)</label><input id="f-n" type="text" inputmode="numeric" autocomplete="off" placeholder="contoh: 1.500.000" class="inp" value="${t.nominal?Number(t.nominal).toLocaleString("id-ID"):""}" oninput="fmtNom(this);chkSaldo()"></div>
+  <div><label class="text-xs font-semibold">Tanggal</label><input id="f-t" type="date" class="inp" value="${t.tgl}" oninput="chkTgl();chkSaldo()" onchange="chkTgl();chkSaldo()"></div>
+  <div id="f-tw" class="hidden col-span-2 text-xs font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/40 rounded-lg px-3 py-2"></div>
+  <div class="col-span-2"><label class="text-xs font-semibold">Metode</label><select id="f-m" class="inp" onchange="chkSaldo()"><option value="Tunai" ${mt(t)==="Tunai"?"selected":""}>Tunai (Cash)</option><option value="Transfer" ${mt(t)==="Transfer"?"selected":""}>Transfer Bank / QRIS</option></select></div>
+  <div id="f-sw" class="hidden col-span-2"></div>
+  <div class="col-span-2"><label class="text-xs font-semibold">Bukti transaksi (foto kuitansi / struk transfer)</label><input id="f-b" type="file" accept="image/*" class="inp !p-1.5 text-xs">${t.bukti?`<div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-paperclip"></i> Bukti sudah terlampir. Pilih file baru hanya jika ingin menggantinya.</div>`:""}</div>
+  <div class="col-span-2"><label class="text-xs font-semibold">Sumber / Penerima</label><input id="f-p" list="dl-p" class="inp" value="${esc(t.pihak)}"></div>
+  <datalist id="dl-p">${[...new Set(S.trx.filter(t=>!isAwal(t)).map(t=>t.pihak))].map(p=>`<option value="${esc(p)}">`).join("")}</datalist><div class="col-span-2"><label class="text-xs font-semibold">Keterangan</label><input id="f-e" class="inp" value="${esc(t.ket)}"></div>
+  </div>
+  <div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button><button id="f-save" class="btn btn-p" onclick="saveTrx(${id||0})">Simpan transaksi</button></div>`);
+  katOpt(t.kategori);chkTgl();chkSaldo();
+}
+function availFor(d,id){const y=d.tgl.slice(0,4),sp=splitAkhir(y);let v=d.metode==="Transfer"?sp.bank:sp.tunai;const o=id&&S.trx.find(x=>x.id===id);
+  if(o&&o.tgl.slice(0,4)===y&&mt(o)===d.metode&&!isAwal(o))v-=(o.jenis==="Masuk"?o.nominal:-o.nominal);return v;}
+const usedKat=(k,y,id)=>sum(S.trx,t=>t.jenis==="Keluar"&&t.kategori===k&&t.tgl.startsWith(y)&&t.id!==id);
+function chkSaldo(){const w=$("#f-sw"),j=$("#f-j").value,tg=$("#f-t").value,m=$("#f-m").value==="Transfer"?"Transfer":"Tunai",n=parseInt($("#f-n").value.replace(/\D/g,""),10)||0;
+  if(j!=="Keluar"||!/^\d{4}-/.test(tg)){w.className="hidden";return;}
+  const a=availFor({tgl:tg,metode:m},CUR),bad=n>a;
+  w.className="col-span-2 text-xs font-semibold rounded-lg px-3 py-2 "+(bad?"text-rose-600 bg-rose-50 dark:bg-rose-950/40":"text-slate-500 bg-slate-500/10");
+  w.textContent="Saldo "+MLBL[m]+" tersedia: "+rp(a)+(bad?" — tidak cukup untuk pengeluaran ini.":"");}
+function readImg(f){return new Promise((ok,no)=>{
+  if(!/^image\//.test(f.type))return no(new Error("Bukti harus berupa file gambar"));if(f.size>12e6)return no(new Error("Ukuran gambar maksimal 12 MB"));
+  const r=new FileReader();r.onerror=()=>no(new Error("Gagal membaca file"));
+  r.onload=()=>{const im=new Image();im.onerror=()=>no(new Error("File gambar tidak dapat dibuka"));
+    im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+      const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);
+      ok({name:f.name.replace(/\.[^.]+$/,"")+".jpg",mime:"image/jpeg",dataUrl:c.toDataURL("image/jpeg",0.72)});};im.src=r.result;};
+  r.readAsDataURL(f);});}
+async function openBukti(id){const t=S.all.find(x=>x.id===id);if(!t||!t.bukti)return;
+  if(t.bukti.startsWith("data:")){const b=await(await fetch(t.bukti)).blob();window.open(URL.createObjectURL(b),"_blank");}else window.open(t.bukti,"_blank","noopener");}
+function chkTgl(){const v=$("#f-t").value,y=v?v.slice(0,4):"",bad=!!y&&locked(y),w=$("#f-tw"),b=$("#f-save");
+  w.classList.toggle("hidden",!bad);w.textContent=bad?MSG_LOCK(y)+" Pilih tanggal di tahun buku yang masih berjalan.":"";
+  b.disabled=bad;b.classList.toggle("opacity-50",bad);b.classList.toggle("cursor-not-allowed",bad);}
+function katOpt(sel){const l=katList($("#f-j").value);$("#f-k").innerHTML=l.map(k=>`<option value="${esc(k)}" ${k===sel?"selected":""}>${esc(k)}</option>`).join("");}
+function fmtNom(el){const d=el.value.replace(/\D/g,"").replace(/^0+(?=\d)/,"");el.value=d?Number(d).toLocaleString("id-ID"):"";}
+async function saveTrx(id){
+  const d={jenis:$("#f-j").value,kategori:$("#f-k").value,nominal:parseInt($("#f-n").value.replace(/\D/g,""),10)||0,tgl:$("#f-t").value,pihak:$("#f-p").value.trim(),ket:$("#f-e").value.trim(),metode:$("#f-m").value==="Transfer"?"Transfer":"Tunai"};
+  if(!d.nominal||d.nominal<=0||!d.tgl||!d.pihak)return toast("Isi nominal, tanggal, dan sumber/penerima","warn");
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(d.tgl)||isNaN(new Date(d.tgl+"T00:00:00")))return toast("Format tanggal tidak valid","warn");
+  if(locked(d.tgl.slice(0,4)))return toast(MSG_LOCK(d.tgl.slice(0,4)),"err");
+  if(id){const o=S.trx.find(x=>x.id===id);if(o&&locked(o.tgl.slice(0,4)))return toast(MSG_LOCK(o.tgl.slice(0,4)),"err");d.id=id;}
+  if(d.jenis==="Keluar"){const a=availFor(d,id);if(d.nominal>a)return toast("Saldo "+MLBL[d.metode]+" tidak cukup (tersedia "+rp(a)+")","err");
+    const c=S.cats.find(x=>x.jenis==="Keluar"&&x.nama===d.kategori);
+    }
+  const f=$("#f-b").files[0],sb=$("#f-save");sb.disabled=true;
+  try{if(f)d.buktiFile=await readImg(f);}catch(e){sb.disabled=false;return toast(e.message,"warn");}
+  try{const r=await apiSaveTransaction({data:d,by:S.user.username});
+    if(!r||r.ok===false){sb.disabled=false;return toast((r&&r.msg)||"Gagal menyimpan","err");}
+    closeModal();const ty=+d.tgl.slice(0,4);let note="";if(ty!==S.year){S.year=ty;note=" (tahun buku "+ty+")";}
+    toast("Transaksi tersimpan"+note);go(S.tab);}catch(e){sb.disabled=false;toast("Gagal menyimpan","err");}
+}
+async function delTrx(id){
+  const tt=S.all.find(x=>x.id===id),au=tt&&isAuto(tt)?"\nCatatan: void hanya membatalkan pencatatan kas. Jumlah aset TIDAK otomatis berubah, sesuaikan lewat Edit Aset.":"";const a=prompt("Void transaksi ini? Data tidak dihapus, hanya ditandai batal dan tercatat di log.\nAlasan pembatalan:"+au);if(a===null)return;
+  if(a.trim().length<3)return toast("Alasan wajib diisi (minimal 3 karakter)","warn");
+  const r=await apiSaveTransaction({op:"void",id,alasan:a.trim(),by:S.user.username});if(r&&r.ok===false)return toast(r.msg||"Gagal membatalkan","err");
+  toast("Transaksi di-void, jejak audit tersimpan");go("trx");}
+
+/* ===== ASET & INVENTARIS (terintegrasi dengan Buku Kas) ===== */
+const isAuto=t=>t.kategori===KBELI||t.kategori===KJUAL;
+const num=e=>parseInt(String(e&&e.value||"").replace(/\D/g,""),10)||0;
+const asetVal=a=>(+a.qty||0)*(+a.harga||0);
+const totalAset=()=>S.aset.reduce((n,a)=>n+asetVal(a),0);
+const apiAset=d=>call("aset",d);
+
+function awalBanner(){
+  const y=Y();if(!canEdit()||locked(y)||S.all.some(t=>t.tgl.slice(0,4)<y)||S.trx.some(t=>isAwal(t)&&t.tgl.startsWith(y)))return "";
+  return `<div class="rounded-2xl p-4 flex flex-wrap items-center gap-3 bg-amber-50 text-amber-800 border border-amber-300 dark:bg-amber-950/40 dark:text-amber-200 dark:border-amber-700"><i class="fa-solid fa-triangle-exclamation"></i><div class="flex-1 min-w-[200px] text-sm"><b>Saldo awal kas ${y} belum diisi.</b> Isi manual sesuai kas pemuda saat ini. Selama kosong, pengeluaran akan ditolak karena saldo dianggap nol.</div><button class="btn btn-p" onclick="S.mtab='setting';go('master')">Isi saldo awal</button></div>`;
+}
+function wealthHtml(){
+  const kas=splitAkhir(Y()).total,av=totalAset(),tot=kas+av,pk=tot>0?Math.max(0,Math.min(100,Math.round(kas/tot*100))):0;
+  const it=[["💰","Total Kas Keuangan",kas,"Saldo kas tahun "+Y()],["🏠","Total Nilai Aset Fisik",av,S.aset.length+" jenis aset & inventaris"],["📊","Total Kekayaan Kepemudaan",tot,"Total kas + total nilai aset"]];
+  return `<div class="glass rounded-2xl p-5" style="border-left:4px solid #f26a1b"><div class="flex flex-wrap items-center gap-2 mb-3"><h3 class="font-extrabold text-lg">Rekapitulasi Kekayaan Kepemudaan</h3><div class="flex-1"></div><button class="text-sm font-semibold underline" onclick="go('aset')">Lihat aset &amp; inventaris</button></div>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">${it.map((c,i)=>`<div class="rounded-xl p-4 ${i===2?"bg-indigo-500/10":"bg-slate-500/10"}"><div class="text-sm text-slate-500">${c[0]} ${c[1]}</div><div class="text-xl sm:text-2xl font-extrabold ${c[2]<0?"text-rose-600":""}">${rp(c[2])}</div><div class="text-xs text-slate-500">${c[3]}</div></div>`).join("")}</div>
+  <div class="flex h-2.5 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 mt-4"><div style="width:${pk}%;background:#10b981"></div><div style="width:${tot>0?100-pk:0}%;background:#f26a1b"></div></div>
+  <div class="flex justify-between text-xs text-slate-500 mt-1"><span><i class="fa-solid fa-circle text-emerald-500"></i> Kas ${pk}%</span><span><i class="fa-solid fa-circle" style="color:#f26a1b"></i> Aset ${tot>0?100-pk:0}%</span></div></div>`;
+}
+
+function vAset(){
+  const ce=canEdit();
+  $("#view").innerHTML=`<div class="tab space-y-4">
+  <div class="flex flex-wrap items-center gap-2"><h2 class="text-lg font-extrabold">Aset &amp; Inventaris Kepemudaan</h2><div class="flex-1"></div>${ce?`<button class="btn btn-p" onclick="openAset()"><i class="fa-solid fa-plus"></i> Tambah aset</button>`:""}</div>
+  <div id="as-sum" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+  <div class="glass rounded-2xl p-3 grid grid-cols-2 gap-2"><input id="aq" class="inp" placeholder="Cari nama / keterangan…" oninput="drawAset()"><select id="ac" class="inp" onchange="drawAset()"><option value="">Semua kategori</option>${[...new Set(S.aset.map(a=>a.kategori).filter(Boolean))].map(k=>`<option>${esc(k)}</option>`).join("")}</select></div>
+  <div class="glass rounded-2xl overflow-auto max-h-[65vh]"><table class="w-full text-sm"><thead><tr><th>Nama aset</th><th>Kategori</th><th>Jumlah</th><th>Harga satuan</th><th>Total nilai</th><th>Keterangan</th>${ce?"<th>Aksi</th>":""}</tr></thead><tbody id="atb"></tbody></table></div>
+  <p class="text-xs text-slate-500"><i class="fa-solid fa-link"></i> Pembelian aset dengan kas otomatis tercatat sebagai pengeluaran (Pengadaan/Pembelian Aset). Penjualan aset otomatis tercatat sebagai pemasukan (Hasil Penjualan Aset). Keduanya bisa dilihat di menu Transaksi dan Buku Kas Umum.</p></div>`;
+  drawAset();
+}
+function drawAset(){
+  if(!$("#atb"))return;
+  const q=($("#aq").value||"").toLowerCase(),k=$("#ac").value,ce=canEdit();
+  const rows=S.aset.filter(a=>(!k||a.kategori===k)&&(!q||(a.nama+" "+a.ket+" "+a.kategori).toLowerCase().includes(q)));
+  const tot=totalAset(),kas=splitAkhir(Y()).total;
+  $("#as-sum").innerHTML=[["Jenis aset",S.aset.length,"fa-boxes-stacked","bg-slate-200 text-slate-700"],["Total nilai aset",rp(tot),"fa-house","bg-orange-100 text-orange-700"],["Total kekayaan (kas + aset)",rp(kas+tot),"fa-chart-pie","bg-indigo-100 text-indigo-700"]]
+    .map(c=>`<div class="glass rounded-2xl p-4 flex items-center gap-4"><div class="w-12 h-12 shrink-0 rounded-2xl flex items-center justify-center text-lg ${c[3]}"><i class="fa-solid ${c[2]}"></i></div><div class="min-w-0"><div class="text-sm text-slate-500">${c[0]}</div><div class="text-xl font-extrabold">${c[1]}</div></div></div>`).join("");
+  $("#atb").innerHTML=rows.length?rows.map(a=>`<tr><td class="font-semibold">${esc(a.nama)}</td><td>${a.kategori?badge(esc(a.kategori),"bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200"):"–"}</td><td class="whitespace-nowrap">${a.qty.toLocaleString("id-ID")} ${esc(a.satuan)}</td><td class="whitespace-nowrap">${rp(a.harga)}</td><td class="font-bold whitespace-nowrap">${rp(asetVal(a))}</td><td class="max-w-[200px] truncate">${esc(a.ket)||"–"}</td>${ce?`<td class="whitespace-nowrap"><button class="text-emerald-600 mr-3" title="Tambah unit" onclick="openUnit(${a.id})"><i class="fa-solid fa-circle-plus"></i></button>${a.qty>0?`<button class="text-amber-600 mr-3" title="Jual aset" onclick="openJual(${a.id})"><i class="fa-solid fa-hand-holding-dollar"></i> Jual</button>`:""}<button class="text-indigo-600 mr-3" title="Edit" onclick="openAset(${a.id})"><i class="fa-solid fa-pen"></i></button><button class="text-rose-600" title="Hapus" onclick="delAset(${a.id})"><i class="fa-solid fa-trash"></i></button></td>`:""}</tr>`).join("")
+    :`<tr><td colspan="7" class="text-center py-8 text-slate-500">Belum ada aset yang cocok.</td></tr>`;
+}
+
+/* --- blok sumber perolehan (dipakai Tambah aset & Tambah unit) --- */
+function srcBlock(){
+  const td=fmtD(new Date()),t=td.slice(0,4)===Y()?td:Y()+"-01-01";
+  return `<div class="col-span-2 rounded-xl bg-slate-500/10 p-3 space-y-2">
+  <label class="flex items-start gap-2 text-sm font-semibold"><input type="checkbox" id="a-kas" class="mt-1" onchange="srcTog('kas')"><span>Beli Menggunakan Kas<span class="block text-xs font-normal text-slate-500">Otomatis tercatat sebagai pengeluaran dan mengurangi saldo kas.</span></span></label>
+  <label class="flex items-start gap-2 text-sm font-semibold"><input type="checkbox" id="a-don" class="mt-1" onchange="srcTog('don')"><span>Sumbangan/Donasi (Tanpa Potong Kas)<span class="block text-xs font-normal text-slate-500">Barang dari donatur. Saldo kas tidak berubah. Isi harga sebagai nilai taksiran.</span></span></label>
+  <label class="flex items-start gap-2 text-sm font-semibold"><input type="checkbox" id="a-hdh" class="mt-1" onchange="srcTog('hdh')"><span>Hadiah Juara / Turnamen (Tanpa Potong Kas)<span class="block text-xs font-normal text-slate-500">Hadiah berupa barang/ternak dari turnamen (misal sapi juara 1). Saldo kas tidak berubah. Isi harga sebagai nilai taksiran.</span></span></label>
+  <p class="text-xs text-slate-500">Jika tidak dicentang: dicatat sebagai aset yang sudah dimiliki (tanpa transaksi kas).</p>
+  <div id="a-hd" class="hidden"><div class="grid grid-cols-2 gap-3 pt-2">
+    <div class="col-span-2"><label class="text-xs font-semibold">Nama turnamen / penyelenggara</label><input id="a-hn" class="inp" maxlength="60" placeholder="contoh: Turnamen Sepak Bola Antar Dusun 2026"></div>
+    <div><label class="text-xs font-semibold">Peringkat</label><input id="a-hj" list="dl-hj" class="inp" maxlength="30" value="Juara 1" placeholder="Juara 1"><datalist id="dl-hj"><option value="Juara 1"><option value="Juara 2"><option value="Juara 3"><option value="Juara Harapan"><option value="Pemain / Tim Terbaik"></datalist></div>
+    <div><label class="text-xs font-semibold">Tanggal diterima</label><input id="a-ht" type="date" class="inp" value="${fmtD(new Date())}"></div>
+    <p class="col-span-2 text-xs text-slate-500">Jika hadiah berupa <b>uang tunai</b>, catat di menu Transaksi sebagai pemasukan, bukan di sini.</p></div></div>
+  <div id="a-cash" class="hidden"><div class="grid grid-cols-2 gap-3 pt-2">
+    <div><label class="text-xs font-semibold">Tanggal pembelian</label><input id="a-t" type="date" class="inp" value="${t}" oninput="chkAsetSaldo()" onchange="chkAsetSaldo()"></div>
+    <div><label class="text-xs font-semibold">Metode bayar</label><select id="a-m" class="inp" onchange="chkAsetSaldo()"><option value="Tunai">Tunai (Cash)</option><option value="Transfer">Transfer Bank / QRIS</option></select></div>
+    <div class="col-span-2"><label class="text-xs font-semibold">Dibeli dari (toko / penjual)</label><input id="a-p" class="inp" placeholder="contoh: Toko Olahraga Jaya"></div>
+    <div class="col-span-2"><label class="text-xs font-semibold">Bukti pembelian (foto kuitansi / struk)</label><input id="a-b" type="file" accept="image/*" class="inp !p-1.5 text-xs"></div>
+    <div id="a-sw" class="hidden col-span-2"></div></div></div></div>`;
+}
+function srcTog(w){
+  const m={kas:$("#a-kas"),don:$("#a-don"),hdh:$("#a-hdh")};
+  if(m[w].checked)Object.keys(m).forEach(x=>{if(x!==w)m[x].checked=false;});
+  $("#a-cash").classList.toggle("hidden",!m.kas.checked);$("#a-hd").classList.toggle("hidden",!m.hdh.checked);chkAsetSaldo();
+}
+function aTot(){const e=$("#a-tot");if(e)e.textContent=rp(num($("#a-q"))*num($("#a-h")));chkAsetSaldo();}
+function chkAsetSaldo(){
+  const w=$("#a-sw"),k=$("#a-kas");if(!w)return;
+  if(!k||!k.checked||!/^\d{4}-/.test($("#a-t").value)){w.className="hidden";return;}
+  const m=$("#a-m").value==="Transfer"?"Transfer":"Tunai",tot=num($("#a-q"))*num($("#a-h")),av=availFor({tgl:$("#a-t").value,metode:m},0),bad=tot>av,y=$("#a-t").value.slice(0,4);
+  w.className="col-span-2 text-xs font-semibold rounded-lg px-3 py-2 "+(bad||locked(y)?"text-rose-600 bg-rose-50 dark:bg-rose-950/40":"text-slate-500 bg-slate-500/10");
+  w.textContent=locked(y)?MSG_LOCK(y):"Saldo "+MLBL[m]+" tersedia: "+rp(av)+(bad?" — tidak cukup untuk pembelian ini.":"");
+}
+/** Validasi sisi klien + baca file bukti. Mengembalikan data sumber, atau null bila gagal. */
+async function srcPrep(total){
+  const sumber=$("#a-kas").checked?"kas":$("#a-don").checked?"donasi":$("#a-hdh").checked?"hadiah":"awal";
+  if(sumber==="hadiah"){
+    const s={sumber,turnamen:$("#a-hn").value.trim(),juara:$("#a-hj").value.trim(),tglHadiah:$("#a-ht").value};
+    if(!s.turnamen)return toast("Isi nama turnamen / penyelenggara","warn"),null;
+    if(!s.juara)return toast("Isi peringkat, misalnya Juara 1","warn"),null;
+    if(s.tglHadiah&&(!/^\d{4}-\d{2}-\d{2}$/.test(s.tglHadiah)||isNaN(new Date(s.tglHadiah+"T00:00:00"))))return toast("Tanggal diterima tidak valid","warn"),null;
+    return s;}
+  if(sumber!=="kas")return{sumber};
+  const s={sumber,tgl:$("#a-t").value,metode:$("#a-m").value==="Transfer"?"Transfer":"Tunai",pihak:$("#a-p").value.trim()};
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(s.tgl)||isNaN(new Date(s.tgl+"T00:00:00")))return toast("Isi tanggal pembelian dengan benar","warn"),null;
+  if(!(total>0))return toast("Harga satuan harus lebih dari 0 untuk pembelian dengan kas","warn"),null;
+  const y=s.tgl.slice(0,4);if(locked(y))return toast(MSG_LOCK(y),"err"),null;
+  const av=availFor(s,0);if(total>av)return toast("Saldo "+MLBL[s.metode]+" tidak cukup (tersedia "+rp(av)+")","err"),null;
+  const c=S.cats.find(x=>x.jenis==="Keluar"&&x.nama===KBELI);
+  
+  const f=$("#a-b").files[0];if(f){try{s.buktiFile=await readImg(f);}catch(e){return toast(e.message,"warn"),null;}}
+  return s;
+}
+async function afterAset(r,msg,tgl){
+  if(!r||r.ok===false)return toast((r&&r.msg)||"Gagal menyimpan","err"),false;
+  closeModal();if(tgl&&+tgl.slice(0,4)!==S.year)S.year=+tgl.slice(0,4);toast(msg);go("aset");return true;
+}
+
+/* --- Tambah / Edit aset --- */
+function openAset(id){
+  if(!canEdit())return;
+  const a=id?S.aset.find(x=>x.id===id):{nama:"",qty:1,satuan:"unit",harga:"",kategori:"",ket:""};
+  openModal(`<h3 class="font-extrabold mb-3">${id?"Edit":"Tambah"} Aset</h3><div class="grid grid-cols-2 gap-3">
+  <div class="col-span-2"><label class="text-xs font-semibold">Nama aset</label><input id="a-n" class="inp" value="${esc(a.nama)}"></div>
+  <div><label class="text-xs font-semibold">Kategori / keterangan jenis</label><input id="a-c" list="dl-ak" class="inp" value="${esc(a.kategori)}"></div>
+  <div><label class="text-xs font-semibold">Satuan</label><input id="a-s" list="dl-as" class="inp" value="${esc(a.satuan)}" placeholder="ekor / unit / set / pasang"></div>
+  <datalist id="dl-ak">${[...new Set(["Ternak","Perabot","Perlengkapan Olahraga","Perlengkapan Kegiatan","Lainnya",...S.aset.map(x=>x.kategori).filter(Boolean)])].map(k=>`<option value="${esc(k)}">`).join("")}</datalist><datalist id="dl-as"><option value="ekor"><option value="unit"><option value="set"><option value="pasang"><option value="buah"></datalist>
+  <div><label class="text-xs font-semibold">Jumlah</label><input id="a-q" type="number" min="${id?0:1}" class="inp" value="${a.qty}" oninput="aTot()"></div>
+  <div><label class="text-xs font-semibold">Nilai / harga satuan (Rp)</label><input id="a-h" inputmode="numeric" class="inp" value="${a.harga?Number(a.harga).toLocaleString("id-ID"):""}" placeholder="0" oninput="fmtNom(this);aTot()"></div>
+  <div class="col-span-2 flex justify-between rounded-xl bg-slate-500/10 px-3 py-2 text-sm"><span class="text-slate-500">Total nilai (jumlah × harga satuan)</span><b id="a-tot">${rp(asetVal(a))}</b></div>
+  <div class="col-span-2"><label class="text-xs font-semibold">Catatan</label><input id="a-e" class="inp" value="${esc(a.ket)}"></div>
+  ${id?`<div class="col-span-2 text-xs text-slate-500 bg-slate-500/10 rounded-lg px-3 py-2"><i class="fa-solid fa-circle-info"></i> Edit hanya mengoreksi data aset dan tidak mencatat transaksi kas. Untuk menambah stok gunakan <b>Tambah unit</b>, untuk menjual gunakan <b>Jual</b>.</div>`:srcBlock()}
+  </div><div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button><button id="a-save" class="btn btn-p" onclick="saveAsetF(${id||0})">Simpan aset</button></div>`);
+}
+async function saveAsetF(id){
+  const d={nama:$("#a-n").value.trim(),kategori:$("#a-c").value.trim(),satuan:$("#a-s").value.trim()||"unit",qty:num($("#a-q")),harga:num($("#a-h")),ket:$("#a-e").value.trim()};
+  if(!d.nama)return toast("Nama aset wajib diisi","warn");
+  if(id)d.id=id;else if(d.qty<1)return toast("Jumlah minimal 1","warn");
+  const b=$("#a-save");b.disabled=true;let s={};
+  if(!id){s=await srcPrep(d.qty*d.harga);if(!s){b.disabled=false;return;}}
+  try{const r=await apiAset({data:{...d,...s},by:S.user.username});
+    if(!(await afterAset(r,id?"Aset diperbarui":s.sumber==="kas"?"Aset ditambah, kas berkurang "+rp(d.qty*d.harga):s.sumber==="hadiah"?"Aset hadiah dicatat (kas tidak berubah)":"Aset ditambah",s.tgl)))b.disabled=false;
+  }catch(e){b.disabled=false;toast("Gagal menyimpan","err");}
+}
+
+/* --- Tambah unit --- */
+function openUnit(id){
+  if(!canEdit())return;const a=S.aset.find(x=>x.id===id);
+  openModal(`<h3 class="font-extrabold">Tambah Unit: ${esc(a.nama)}</h3><p class="text-sm text-slate-500 mb-3">Stok saat ini ${a.qty.toLocaleString("id-ID")} ${esc(a.satuan)} @ ${rp(a.harga)}. Harga satuan aset akan dihitung rata-rata tertimbang.</p><div class="grid grid-cols-2 gap-3">
+  <div><label class="text-xs font-semibold">Jumlah tambahan (${esc(a.satuan)})</label><input id="a-q" type="number" min="1" class="inp" value="1" oninput="aTot()"></div>
+  <div><label class="text-xs font-semibold">Harga satuan unit baru (Rp)</label><input id="a-h" inputmode="numeric" class="inp" value="${a.harga?Number(a.harga).toLocaleString("id-ID"):""}" oninput="fmtNom(this);aTot()"></div>
+  <div class="col-span-2 flex justify-between rounded-xl bg-slate-500/10 px-3 py-2 text-sm"><span class="text-slate-500">Total nilai tambahan</span><b id="a-tot">${rp(a.harga)}</b></div>${srcBlock()}</div>
+  <div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button><button id="a-save" class="btn btn-p" onclick="saveUnit(${id})">Simpan</button></div>`);
+}
+async function saveUnit(id){
+  const q=num($("#a-q")),h=num($("#a-h"));if(q<1)return toast("Jumlah minimal 1","warn");
+  const b=$("#a-save");b.disabled=true;const s=await srcPrep(q*h);if(!s){b.disabled=false;return;}
+  try{const r=await apiAset({op:"addUnit",id,qty:q,harga:h,...s,by:S.user.username});
+    if(!(await afterAset(r,s.sumber==="kas"?"Unit ditambah, kas berkurang "+rp(q*h):s.sumber==="hadiah"?"Unit hadiah dicatat (kas tidak berubah)":"Unit ditambah",s.tgl)))b.disabled=false;
+  }catch(e){b.disabled=false;toast("Gagal menyimpan","err");}
+}
+
+/* --- Jual aset (menambah kas) --- */
+function openJual(id){
+  if(!canEdit())return;const a=S.aset.find(x=>x.id===id),td=fmtD(new Date()),t=td.slice(0,4)===Y()?td:Y()+"-01-01";
+  openModal(`<h3 class="font-extrabold">Jual Aset: ${esc(a.nama)}</h3><p class="text-sm text-slate-500 mb-3">Stok tersedia ${a.qty.toLocaleString("id-ID")} ${esc(a.satuan)}. Hasil penjualan otomatis tercatat sebagai pemasukan <b>Hasil Penjualan Aset</b>.</p><div class="grid grid-cols-2 gap-3">
+  <div><label class="text-xs font-semibold">Jumlah dijual (maks ${a.qty})</label><input id="j-q" type="number" min="1" max="${a.qty}" class="inp" value="1" oninput="jTot()"></div>
+  <div><label class="text-xs font-semibold">Harga jual satuan (Rp)</label><input id="j-h" inputmode="numeric" class="inp" value="${a.harga?Number(a.harga).toLocaleString("id-ID"):""}" oninput="fmtNom(this);jTot()"></div>
+  <div class="col-span-2 flex justify-between rounded-xl bg-emerald-500/10 px-3 py-2 text-sm"><span class="text-slate-500">Total uang masuk ke kas</span><b id="j-tot" class="text-emerald-600">${rp(a.harga)}</b></div>
+  <div><label class="text-xs font-semibold">Tanggal penjualan</label><input id="j-t" type="date" class="inp" value="${t}"></div>
+  <div><label class="text-xs font-semibold">Diterima via</label><select id="j-m" class="inp"><option value="Tunai">Tunai (Cash)</option><option value="Transfer">Transfer Bank / QRIS</option></select></div>
+  <div class="col-span-2"><label class="text-xs font-semibold">Pembeli</label><input id="j-p" class="inp" placeholder="Nama pembeli"></div></div>
+  <div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button><button id="j-save" class="btn btn-p" onclick="doJual(${id})">Jual &amp; catat ke kas</button></div>`);
+}
+function jTot(){$("#j-tot").textContent=rp(num($("#j-q"))*num($("#j-h")));}
+async function doJual(id){
+  const a=S.aset.find(x=>x.id===id),q=num($("#j-q")),h=num($("#j-h")),tgl=$("#j-t").value;
+  if(!(q>=1&&q<=a.qty))return toast("Jumlah jual harus 1 sampai "+a.qty,"warn");
+  if(!(h>0))return toast("Isi harga jual satuan","warn");
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(tgl)||isNaN(new Date(tgl+"T00:00:00")))return toast("Tanggal tidak valid","warn");
+  if(locked(tgl.slice(0,4)))return toast(MSG_LOCK(tgl.slice(0,4)),"err");
+  const b=$("#j-save");b.disabled=true;
+  try{const r=await apiAset({op:"sell",id,qty:q,hargaJual:h,tgl,metode:$("#j-m").value==="Transfer"?"Transfer":"Tunai",pembeli:$("#j-p").value.trim()||"Pembeli",by:S.user.username});
+    if(!(await afterAset(r,"Aset terjual, kas bertambah "+rp(q*h),tgl)))b.disabled=false;
+  }catch(e){b.disabled=false;toast("Gagal menyimpan","err");}
+}
+
+async function delAset(id){
+  const a=S.aset.find(x=>x.id===id);
+  if(!confirm("Hapus aset \""+a.nama+"\" dari daftar?\nCatatan: penghapusan TIDAK mengubah saldo kas. Jika aset dijual, gunakan tombol Jual agar kas bertambah."))return;
+  const r=await apiAset({op:"delete",id,by:S.user.username});
+  if(!r||r.ok===false)return toast((r&&r.msg)||"Gagal menghapus","err");toast("Aset dihapus");go("aset");
+}
+
+/* ===== LAPORAN ===== */
+function lapRows(){
+  const y=Y(),a=$("#la")?$("#la").value:"",b=$("#lb")?$("#lb").value:"";let saldo=saldoAwal(y);
+  const rows=[{tgl:y+"-01-01",ket:"Saldo Awal Kas "+y,m:"",debet:0,kredit:0,saldo}];
+  yrTrx().filter(t=>!isAwal(t)).sort((p,q)=>p.tgl.localeCompare(q.tgl)||p.id-q.id).forEach(t=>{const d=t.jenis==="Masuk"?t.nominal:0,k=t.jenis==="Keluar"?t.nominal:0;saldo+=d-k;rows.push({tgl:t.tgl,ket:t.kategori+" - "+t.pihak+(t.ket?" ("+t.ket+")":""),m:mt(t),debet:d,kredit:k,saldo});});
+  return rows.filter(r=>(!a||r.tgl>=a)&&(!b||r.tgl<=b));
+}
+function vLap(){
+  const y=Y(),a=yrTrx(),mi=inc(a),mo=exp(a),sa=saldoAwal(y),sk=saldoAkhir(y);
+  const mm=BLN.map((b,m)=>{const x=a.filter(t=>t.tgl.startsWith(y+"-"+pad(m+1)));return{b,i:inc(x),o:exp(x)};});
+  const cards=[["Total Pemasukan",rp(mi),"text-emerald-600"],["Total Pengeluaran",rp(mo),"text-rose-600"],[mi>=mo?"Net Surplus":"Net Defisit",rp(mi-mo),mi>=mo?"text-emerald-600":"text-rose-600"],["Saldo Awal → Akhir",rp(sa)+" → "+rp(sk),"text-indigo-600"]];
+  $("#view").innerHTML=`<div class="tab space-y-4"><div class="flex flex-wrap items-center gap-2"><h2 class="text-lg font-extrabold">Laporan ${y}</h2>${lockBadge()}<div class="flex-1"></div>
+  ${canEdit()?`<button class="btn btn-g noprint" onclick="exportCsv()"><i class="fa-solid fa-file-csv"></i> CSV</button><button class="btn btn-g noprint" onclick="exportXls()"><i class="fa-solid fa-file-excel"></i> Excel</button><button class="btn btn-p noprint" onclick="window.print()"><i class="fa-solid fa-print"></i> Cetak PDF</button>`:""}
+  ${isSA()&&!locked(S.year)?`<button class="btn bg-rose-600 text-white noprint" onclick="closeBook()"><i class="fa-solid fa-lock"></i> Tutup Tahun Buku</button>`:""}</div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">${cards.map(c=>`<div class="glass rounded-2xl p-4"><div class="text-xs text-slate-500">${c[0]}</div><div class="font-extrabold text-sm sm:text-base ${c[2]}">${c[1]}</div></div>`).join("")}</div>
+  <h3 class="font-bold">Ringkasan bulanan <span class="text-xs font-normal text-slate-500">· klik baris bulan untuk melihat rincian transaksi</span></h3><div class="glass rounded-2xl overflow-auto max-h-[50vh]"><table class="w-full text-sm"><thead><tr><th>Bulan</th><th>Pemasukan</th><th>Pengeluaran</th><th>Selisih</th><th>Δ Pemasukan</th></tr></thead><tbody>${mm.map((r,k)=>{const p=mm[k-1];return `<tr class="cursor-pointer hover:bg-indigo-500/10" onclick="openMonth(${k})" title="Klik untuk melihat rincian"><td class="font-semibold">${r.b} <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i></td><td class="text-emerald-600">${rp(r.i)}</td><td class="text-rose-600">${rp(r.o)}</td><td class="font-bold">${rp(r.i-r.o)}</td><td>${p&&p.i&&r.i?((r.i-p.i)/p.i*100).toFixed(0)+"%":"–"}</td></tr>`;}).join("")}</tbody></table></div>
+  <div class="flex flex-wrap items-center gap-2"><h3 class="font-bold flex-1">Buku Kas Umum</h3><input type="date" id="la" class="inp !w-auto noprint" oninput="drawLap()"><input type="date" id="lb" class="inp !w-auto noprint" oninput="drawLap()"></div>
+  <div class="glass rounded-2xl overflow-auto max-h-[60vh]"><table class="w-full text-sm"><thead><tr><th>Tanggal</th><th>Uraian</th><th>Metode</th><th>Debet (Masuk)</th><th>Kredit (Keluar)</th><th>Saldo</th></tr></thead><tbody id="lb2"></tbody></table></div></div>`;
+  drawLap();
+}
+function drawLap(){
+  const r=lapRows(),d=r.reduce((n,x)=>n+x.debet,0),k=r.reduce((n,x)=>n+x.kredit,0);
+  $("#lb2").innerHTML=r.map(x=>`<tr><td class="whitespace-nowrap">${x.tgl}</td><td>${esc(x.ket)}</td><td>${x.m?mb(x.m):"–"}</td><td class="text-emerald-600">${x.debet?rp(x.debet):"–"}</td><td class="text-rose-600">${x.kredit?rp(x.kredit):"–"}</td><td class="font-bold">${rp(x.saldo)}</td></tr>`).join("")+`<tr class="font-bold"><td colspan="3">Total</td><td class="text-emerald-600">${rp(d)}</td><td class="text-rose-600">${rp(k)}</td><td></td></tr>`;
+}
+function monthRows(k){const p=Y()+"-"+pad(k+1);return yrTrx().filter(t=>t.tgl.startsWith(p)&&!isAwal(t)).sort((a,b)=>a.tgl.localeCompare(b.tgl)||a.id-b.id);}
+function openMonth(k){
+  const r=monthRows(k),mi=inc(r),mo=exp(r);
+  const pm=m=>{const x=r.filter(t=>mt(t)===m);return [inc(x),exp(x)];};
+  openModal(`<h3 class="font-extrabold">Detail Transaksi ${BLN[k]} ${Y()}</h3>
+  <div class="grid grid-cols-3 gap-2 mb-3 text-center">${[["Masuk",mi,"text-emerald-600"],["Keluar",mo,"text-rose-600"],["Selisih",mi-mo,"text-indigo-600"]].map(c=>`<div class="rounded-xl bg-slate-500/10 p-2"><div class="text-[11px] text-slate-500">${c[0]}</div><div class="font-bold text-sm ${c[2]}">${rp(c[1])}</div></div>`).join("")}</div>
+  <div class="grid sm:grid-cols-2 gap-2 mb-3">${["Tunai","Transfer"].map(m=>{const v=pm(m);return `<div class="rounded-xl bg-slate-500/10 p-2 text-xs flex flex-wrap items-center gap-x-2 gap-y-1">${mb(m)}<span class="text-emerald-600 font-semibold">Masuk ${rp(v[0])}</span><span class="text-rose-600 font-semibold">Keluar ${rp(v[1])}</span></div>`;}).join("")}</div>
+  <div class="overflow-auto max-h-[50vh] rounded-xl border border-slate-200 dark:border-slate-700"><table class="w-full text-sm"><thead><tr><th>Tanggal</th><th>Jenis</th><th>Kategori &amp; pihak</th><th>Keterangan</th><th>Metode</th><th>Nominal</th></tr></thead><tbody>${r.map(t=>{const m=t.jenis==="Masuk";return `<tr><td class="whitespace-nowrap">${t.tgl}</td><td>${badge(t.jenis,m?"bg-emerald-100 text-emerald-700":"bg-rose-100 text-rose-700")}</td><td><div class="font-semibold">${esc(t.kategori)}</div><div class="text-xs text-slate-500">${esc(t.pihak)}</div></td><td>${esc(t.ket)||"–"}</td><td>${mb(mt(t))}</td><td class="font-bold whitespace-nowrap ${m?"text-emerald-600":"text-rose-600"}">${m?"+":"-"}${rp(t.nominal)}</td></tr>`;}).join("")||`<tr><td colspan="6" class="text-center py-8 text-slate-500">Belum ada transaksi pada bulan ini.</td></tr>`}</tbody></table></div>
+  <div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Tutup</button><button class="btn btn-p" onclick="printMonth(${k})"><i class="fa-solid fa-print"></i> Cetak / PDF</button></div>`);
+  $("#mbox").style.maxWidth="48rem";
+}
+function printMonth(k){
+  const r=monthRows(k),mi=inc(r),mo=exp(r),td="border:1px solid #888;padding:5px";
+  const pm=m=>{const x=r.filter(t=>mt(t)===m);return MLBL[m]+": masuk "+rp(inc(x))+", keluar "+rp(exp(x));};
+  $("#pv").innerHTML=`<h2 style="font-size:18px;font-weight:700">Kas Pemuda Bunter — Detail Transaksi ${BLN[k]} ${Y()}</h2><p style="font-size:12px;margin:2px 0 10px">Dicetak ${new Date().toLocaleString("id-ID")}</p><table style="border-collapse:collapse;width:100%;font-size:12px"><tr>${["Tanggal","Jenis","Kategori","Sumber/Penerima","Keterangan","Metode","Nominal"].map(h=>`<th style="${td};text-align:left;background:#eee">${h}</th>`).join("")}</tr>${r.map(t=>`<tr>${[t.tgl,t.jenis,t.kategori,t.pihak,t.ket,MLBL[mt(t)],(t.jenis==="Masuk"?"+":"-")+rp(t.nominal)].map(c=>`<td style="${td}">${esc(c)}</td>`).join("")}</tr>`).join("")}<tr><td colspan="7" style="${td};font-weight:700">Total masuk ${rp(mi)} | Total keluar ${rp(mo)} | Selisih ${rp(mi-mo)}</td></tr><tr><td colspan="7" style="${td}">${pm("Tunai")} &nbsp;|&nbsp; ${pm("Transfer")}</td></tr></table>`;
+  window.onafterprint=()=>document.body.classList.remove("pm");
+  document.body.classList.add("pm");window.print();
+}
+function closeBook(){
+  const y=Y();
+  openModal(`<h3 class="font-extrabold mb-2 text-rose-600">Tutup Tahun Buku ${y}?</h3><p class="text-sm mb-1">Data ${y} dibekukan (tidak bisa ditambah, diubah, atau dihapus). Saldo Awal Kas ${+y+1} dibuat otomatis sebesar <b>${rp(saldoAkhir(y))}</b>.</p><p class="text-xs text-slate-500 mb-3">Tindakan ini tidak dapat dibatalkan.</p><input id="cf" class="inp" placeholder="Ketik ${y} untuk konfirmasi">
+  <div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button><button class="btn btn-p" onclick="doClose()">Tutup tahun buku</button></div>`);
+}
+async function doClose(){
+  if($("#cf").value.trim()!==Y())return toast("Ketik tahun dengan benar untuk konfirmasi","warn");
+  await apiSaveTransaction({op:"closeYear",year:S.year,by:S.user.username});closeModal();toast("Tahun buku "+Y()+" ditutup");S.year++;go("lap");
+}
+function dl(name,type,txt){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+txt],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href);toast("File diunduh");}
+function exportCsv(){const r=lapRows();dl("buku-kas-pemuda-bunter.csv","text/csv;charset=utf-8",["Tanggal,Uraian,Metode,Debet,Kredit,Saldo",...r.map(x=>[x.tgl,'"'+x.ket.replace(/"/g,'""')+'"',x.m?MLBL[x.m]:"",x.debet,x.kredit,x.saldo].join(","))].join("\n"));}
+function exportXls(){const r=lapRows();dl("buku-kas-pemuda-bunter.xls","application/vnd.ms-excel","<table border='1'><tr><th>Tanggal</th><th>Uraian</th><th>Metode</th><th>Debet</th><th>Kredit</th><th>Saldo</th></tr>"+r.map(x=>`<tr><td>${x.tgl}</td><td>${esc(x.ket)}</td><td>${x.m?MLBL[x.m]:""}</td><td>${x.debet}</td><td>${x.kredit}</td><td>${x.saldo}</td></tr>`).join("")+"</table>");}
+
+/* ===== PENGAJUAN DANA (Bendahara ajukan -> Ketua/Wakil approve -> kas otomatis terpotong) ===== */
+const PJ_BADGE={Diajukan:"bg-amber-100 text-amber-700",Disetujui:"bg-emerald-100 text-emerald-700",Ditolak:"bg-rose-100 text-rose-700",Batal:"bg-slate-200 text-slate-600"};
+const isKetua=()=>["ketua","superadmin"].includes(S.user.role); // penyetuju pengajuan: Ketua/Wakil & Super Admin
+function vPengajuan(){
+  const y=Y(),lk=locked(y),P=S.pj.filter(x=>x.tahun===y).sort((a,b)=>b.id-a.id),ce=canEdit()&&!lk,kt=isKetua()&&!lk;
+  const w=P.filter(x=>x.status==="Diajukan").length,tl=P.filter(x=>x.status==="Ditolak").length;
+  const rows=P.map(x=>{const b=[];
+    if(kt&&x.status==="Diajukan")b.push(`<button class="btn btn-p" onclick="pjOp('approve',${x.id})"><i class="fa-solid fa-check"></i> Setujui</button><button class="btn btn-g" onclick="pjAlasan('reject',${x.id},'Alasan penolakan (wajib):')">Tolak</button>`);
+    if(ce&&(x.status==="Diajukan"||x.status==="Ditolak"))b.push(`<button class="btn ${x.status==="Ditolak"?"btn-p":"btn-g"}" onclick="openPj(${x.id})"><i class="fa-solid fa-pen"></i> ${x.status==="Ditolak"?"Edit & ajukan lagi":"Edit"}</button><button class="btn btn-g" onclick="pjAlasan('cancel',${x.id},'Alasan pembatalan (wajib):')">Batalkan</button>`);
+    return `<tr><td>#${x.id}</td><td><b>${esc(x.keperluan)}</b><div class="text-xs text-slate-500">${esc(x.kategori)} · ${esc(x.tgl)} · ${esc(x.metode)} · diajukan ${esc(x.diajukanOleh)}${x.diputusOleh?" · diputus "+esc(x.diputusOleh):""}${x.bukti?` · <a class="underline" target="_blank" rel="noopener" href="${esc(x.bukti)}">bukti</a>`:""}</div>${x.alasan?`<div class="text-xs ${x.status==="Ditolak"?"text-rose-600":"text-slate-500"}">${esc(x.alasan)}</div>`:""}</td><td class="text-right">${rp(x.jumlah)}</td><td>${badge(x.status,PJ_BADGE[x.status])}${x.trxId?`<div class="text-xs text-slate-500 mt-1">kas terpotong · trx #${x.trxId}</div>`:""}</td><td class="whitespace-nowrap text-right">${b.join(" ")}</td></tr>`;}).join("");
+  $("#view").innerHTML=`<div class="tab space-y-4"><div class="flex flex-wrap items-center gap-2"><h2 class="text-lg font-extrabold">Pengajuan Dana ${y}</h2>${lockBadge()}<div class="flex-1"></div>${ce?`<button class="btn btn-p" onclick="openPj(0)"><i class="fa-solid fa-plus"></i> Ajukan Dana</button>`:""}</div>
+  <div class="glass rounded-2xl p-4 text-sm text-slate-500">Alur: <b>Bendahara mengajukan</b> → <b>Ketua/Wakil Ketua (atau Super Admin) menyetujui</b> → <b>kas otomatis terpotong</b> dan tercatat di Transaksi. Jika jumlah berbeda atau ditolak, Bendahara bisa <b>edit lalu ajukan lagi</b>. ${w?`<span class="text-amber-600 font-semibold">${w} menunggu persetujuan.</span> `:""}${tl&&ce?`<span class="text-rose-600 font-semibold">${tl} ditolak, perlu diperbaiki.</span>`:""}</div>
+  <div class="glass rounded-2xl overflow-auto"><table class="w-full text-sm"><thead><tr><th>#</th><th>Keperluan</th><th class="text-right">Jumlah</th><th>Status</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="text-center text-slate-500 py-6">Belum ada pengajuan.</td></tr>'}</tbody></table></div></div>`;
+}
+function openPj(id){
+  const x=id?S.pj.find(v=>v.id===id):null,td=fmtD(new Date()),t=x?x.tgl:(td.slice(0,4)===Y()?td:Y()+"-01-01"),ks=S.cats.filter(c=>c.jenis==="Keluar"&&c.nama!==KBELI&&c.nama!==KJUAL);
+  openModal(`<h3 class="font-extrabold mb-3">${x?(x.status==="Ditolak"?"Edit & ajukan lagi":"Edit pengajuan"):"Ajukan dana"}</h3>${x&&x.status==="Ditolak"?`<p class="text-xs text-rose-600 mb-2">${esc(x.alasan)}</p>`:""}<div class="space-y-3">
+  <div><label class="text-xs font-semibold">Kategori</label><select id="p-k" class="inp">${ks.map(c=>`<option ${x&&c.nama===x.kategori?"selected":""}>${esc(c.nama)}</option>`).join("")}</select></div>
+  <div><label class="text-xs font-semibold">Keperluan</label><input id="p-e" class="inp" value="${esc(x?x.keperluan:"")}" placeholder="contoh: Konsumsi lomba 17 Agustus"></div>
+  <div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-semibold">Jumlah (Rp)</label><input id="p-j" class="inp" inputmode="numeric" value="${x?Number(x.jumlah).toLocaleString("id-ID"):""}" oninput="fmtNom(this)"></div><div><label class="text-xs font-semibold">Tanggal</label><input id="p-t" type="date" class="inp" value="${t}"></div></div>
+  <div class="grid grid-cols-2 gap-3"><div><label class="text-xs font-semibold">Metode</label><select id="p-m" class="inp"><option value="Tunai" ${x&&x.metode==="Tunai"?"selected":""}>${MLBL.Tunai}</option><option value="Transfer" ${x&&x.metode==="Transfer"?"selected":""}>${MLBL.Transfer}</option></select></div><div><label class="text-xs font-semibold">Dibayarkan kepada (opsional)</label><input id="p-p" class="inp" value="${esc(x?x.pihak:"")}"></div></div>
+  <div><label class="text-xs font-semibold">Bukti / nota / rencana anggaran biaya (opsional)</label><input id="p-b" type="file" accept="image/*" class="inp !p-1.5 text-xs">${x&&x.bukti?`<div class="text-xs text-slate-500 mt-1">Sudah ada bukti; pilih file baru untuk mengganti.</div>`:""}</div>
+  <p class="text-xs text-slate-500">Kas terpotong otomatis saat Ketua/Wakil Ketua atau Super Admin menyetujui.</p></div>
+  <div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button><button id="p-s" class="btn btn-p" onclick="savePj(${id})">${x&&x.status==="Ditolak"?"Simpan & ajukan lagi":"Ajukan"}</button></div>`);
+}
+async function savePj(id){
+  const j=parseInt($("#p-j").value.replace(/\D/g,""),10);if(!(j>0))return toast("Jumlah wajib diisi","warn");
+  const data={kategori:$("#p-k").value,keperluan:$("#p-e").value.trim(),jumlah:j,tgl:$("#p-t").value,metode:$("#p-m").value,pihak:$("#p-p").value},f=$("#p-b").files[0],sb=$("#p-s");sb.disabled=true;
+  try{if(f)data.buktiFile=await readImg(f);}catch(e){sb.disabled=false;return toast(e.message,"warn");}
+  const r=await apiPengajuan({op:"save",id:id||undefined,data,by:S.user.username});
+  if(!r.ok){sb.disabled=false;return toast(r.msg||"Gagal menyimpan","err");}closeModal();toast("Pengajuan terkirim untuk disetujui");go("pengajuan");
+}
+async function pjOp(op,id,extra){
+  const x=S.pj.find(v=>v.id===id);
+  if(op==="approve"&&!confirm("Setujui pengajuan ini? Kas langsung terpotong "+rp(x.jumlah)+" ("+x.metode+").")) return;
+  const r=await apiPengajuan({op,id,by:S.user.username,...(extra||{})});if(!r.ok)return toast(r.msg||"Gagal","err");
+  toast({approve:"Disetujui, kas terpotong "+rp(x.jumlah),reject:"Pengajuan ditolak",cancel:"Pengajuan dibatalkan"}[op]);go("pengajuan");
+}
+function pjAlasan(op,id,msg){const a=prompt(msg);if(a==null)return;pjOp(op,id,{alasan:a});}
+
+/* ===== MASTER DATA ===== */
+function vMaster(){
+  const tabs=[["kategori","Kategori Transaksi","fa-tags"],["setting","Setting Tahun Buku & Kas","fa-sliders"]];
+  $("#view").innerHTML=`<div class="tab space-y-4"><div class="flex flex-wrap gap-2">${tabs.map(t=>`<button onclick="S.mtab='${t[0]}';vMaster()" class="btn ${S.mtab===t[0]?"btn-p":"btn-o"}"><i class="fa-solid ${t[2]}"></i> ${t[1]}</button>`).join("")}</div><div id="mc"></div></div>`;
+  ({kategori:mKategori,setting:mSetting})[S.mtab]();
+}
+function mKategori(){
+  const box=j=>`<div class="glass rounded-2xl p-5"><div class="flex items-center mb-3"><h3 class="font-extrabold text-lg flex-1">Kategori ${j==="Masuk"?"Pemasukan":"Pengeluaran"}</h3><button class="btn btn-p" onclick="openCat(0,'${j}')"><i class="fa-solid fa-plus"></i> Tambah</button></div>${S.cats.filter(c=>c.jenis===j).map(c=>`<div class="flex items-center gap-2 py-2 border-b border-slate-200/70 dark:border-slate-700 last:border-0"><span class="w-8 h-8 rounded-lg flex items-center justify-center ${j==="Masuk"?"bg-emerald-100 text-emerald-700":"bg-rose-100 text-rose-700"}"><i class="fa-solid fa-tag"></i></span><span class="flex-1 text-sm font-semibold">${esc(c.nama)}</span>${c.nama===KBELI||c.nama===KJUAL?`<span class="text-xs text-slate-500"><i class="fa-solid fa-lock"></i> otomatis</span>`:`<button class="text-indigo-600 mr-2" title="Edit" onclick="openCat(${c.id})"><i class="fa-solid fa-pen"></i></button><button class="text-rose-600" title="Hapus" onclick="delCat(${c.id})"><i class="fa-solid fa-trash"></i></button>`}</div>`).join("")||'<p class="text-sm text-slate-500">Belum ada kategori.</p>'}</div>`;
+  $("#mc").innerHTML=`<div class="grid md:grid-cols-2 gap-4">${box("Masuk")}${box("Keluar")}</div>`;
+}
+function openCat(id,j){
+  const c=id?S.cats.find(x=>x.id===id):{jenis:j,nama:""};
+  openModal(`<h3 class="font-extrabold">${id?"Edit":"Tambah"} Kategori</h3><div class="space-y-3"><div><label class="text-xs font-semibold">Jenis</label><select id="c-j" class="inp"><option value="Masuk" ${c.jenis==="Masuk"?"selected":""}>Pemasukan</option><option value="Keluar" ${c.jenis==="Keluar"?"selected":""}>Pengeluaran</option></select></div><div><label class="text-xs font-semibold">Nama kategori</label><input id="c-n" class="inp" value="${esc(c.nama)}"></div></div><div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button><button class="btn btn-p" onclick="saveCat(${id||0})">Simpan kategori</button></div>`);
+}
+async function saveCat(id){
+  const d={jenis:$("#c-j").value,nama:$("#c-n").value.trim()};
+  if(!d.nama)return toast("Nama kategori wajib diisi","warn");
+  if(id)d.id=id;const r=await apiSaveCategory({data:d,by:S.user.username});
+  if(!r.ok)return toast(r.msg||"Gagal menyimpan","err");closeModal();toast("Kategori tersimpan");go("master");
+}
+async function delCat(id){
+  if(!confirm("Hapus kategori ini?"))return;
+  const r=await apiSaveCategory({op:"delete",id,by:S.user.username});
+  if(!r.ok)return toast(r.msg||"Gagal menghapus","err");toast("Kategori dihapus");go("master");
+}
+function mSetting(yy){
+  const t=S.set,sy=String(t.tahunBuku),y=String(+yy>=2000?+yy:t.tahunBuku),sp=splitAkhir(sy),as=awalSplit(y);
+  /* Manual: hanya tahun pertama (belum ada transaksi tahun sebelumnya) dan belum ditutup. Setelahnya otomatis dari tutup tahun. */
+  const first=!S.closed[y]&&!S.all.some(x=>x.tgl.slice(0,4)<y),f=v=>v?Number(v).toLocaleString("id-ID"):"";
+  const sudah=S.trx.some(x=>isAwal(x)&&x.tgl.startsWith(y));
+  const awal=first?`<div class="mt-5 pt-4 border-t border-slate-200/70 dark:border-slate-700"><h4 class="font-bold">Saldo awal kas ${y} <span class="text-xs font-semibold text-amber-600">diisi manual</span></h4><p class="text-xs text-slate-500 mb-3">Isi sesuai saldo kas pemuda saat ini, dipisah antara uang tunai dan rekening/QRIS. ${y} adalah tahun pertama sistem, jadi tidak otomatis. Mulai tahun berikutnya, saldo awal terbentuk otomatis dari saldo akhir setelah Tutup Tahun Buku.</p><div class="grid sm:grid-cols-2 gap-3"><div><label class="text-xs font-semibold">Saldo awal Tunai (Rp)</label><input id="s-at" class="inp" inputmode="numeric" placeholder="0" value="${f(as.tunai)}" oninput="fmtNom(this)"></div><div><label class="text-xs font-semibold">Saldo awal Transfer Bank / QRIS (Rp)</label><input id="s-ab" class="inp" inputmode="numeric" placeholder="0" value="${f(as.bank)}" oninput="fmtNom(this)"></div></div>${sudah?`<p class="text-xs text-slate-500 mt-2"><i class="fa-solid fa-circle-info"></i> Saldo awal sudah tercatat. Anda masih bisa mengoreksinya selama tahun ${y} belum ditutup.</p>`:""}</div>`
+    :`<div class="mt-5 pt-4 border-t border-slate-200/70 dark:border-slate-700 text-sm text-slate-500"><i class="fa-solid fa-link"></i> Saldo awal ${y} otomatis mengikuti saldo akhir tahun sebelumnya (tidak bisa diubah manual): <b class="text-slate-800 dark:text-slate-200">${rp(as.tunai+as.bank)}</b></div>`;
+  $("#mc").innerHTML=`<div class="grid md:grid-cols-3 gap-4"><div class="glass rounded-2xl p-5 md:col-span-2"><h3 class="font-extrabold text-lg">Setting Tahun Buku &amp; Saldo Awal</h3><p class="text-sm text-slate-500 mb-4">Untuk mulai memakai sistem: tentukan tahun mulai (contoh 2026), isi saldo awal Tunai dan Transfer di bawah, lalu simpan sekaligus.</p><div class="max-w-xs"><label class="text-xs font-semibold">Tahun buku aktif</label><input id="s-y" type="number" min="2000" class="inp" value="${y}" onchange="mSetting(this.value)"></div>${awal}<div class="mt-4 flex justify-end"><button class="btn btn-p" onclick="saveSet()">Simpan pengaturan</button></div></div>
+  <div class="glass rounded-2xl p-5"><div class="text-sm text-slate-500">Saldo kas tahun buku ${sy}</div><div class="text-2xl font-extrabold">${rp(sp.total)}</div><div class="mt-1">${S.closed[sy]?badge("Ditutup","bg-slate-300 text-slate-700"):badge("Berjalan","bg-emerald-100 text-emerald-700")}</div><div class="mt-3 space-y-1.5 text-sm"><div class="flex justify-between items-center">${mb("Tunai")}<b>${rp(sp.tunai)}</b></div><div class="flex justify-between items-center">${mb("Transfer")}<b>${rp(sp.bank)}</b></div></div></div></div>`;
+}
+async function saveSet(){
+  const d={tahunBuku:+$("#s-y").value};
+  if(!(d.tahunBuku>=2000))return toast("Isi tahun buku yang valid","warn");
+  const at=$("#s-at"),ab=$("#s-ab"),n=e=>parseInt(e.value.replace(/\D/g,""),10)||0;
+  if(at){d.awalTunai=n(at);d.awalBank=n(ab);}
+  const r=await apiSaveSettings({data:d,by:S.user.username});if(r&&r.ok===false)return toast(r.msg||"Gagal menyimpan","err");
+  S.year=d.tahunBuku;toast("Pengaturan disimpan");go("master");
+}
+
+/* ===== USER (Super Admin) ===== */
+function vUsers(){
+  $("#view").innerHTML=`<div class="tab space-y-4"><div class="flex items-center"><h2 class="text-lg font-extrabold flex-1">Manajemen User</h2><button class="btn btn-p" onclick="openUser()"><i class="fa-solid fa-user-plus"></i> Tambah user</button></div>
+  <div class="glass rounded-2xl overflow-x-auto"><table class="w-full text-sm"><thead><tr><th>Username</th><th>Nama lengkap</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+  ${S.users.map(u=>`<tr><td class="font-semibold">${esc(u.username)}${u.demo?" "+badge("Akun demo","bg-amber-100 text-amber-700"):""}</td><td>${esc(u.nama)}</td><td>${ROLE[u.role]}</td><td>${u.aktif?badge("Aktif","bg-emerald-100 text-emerald-700"):badge("Nonaktif","bg-slate-200 text-slate-600")}</td><td class="whitespace-nowrap"><button class="text-indigo-600 mr-3" onclick="openUser('${esc(u.username)}')"><i class="fa-solid fa-pen"></i> Edit</button><button class="text-amber-600 mr-3" onclick="resetPw('${esc(u.username)}')"><i class="fa-solid fa-key"></i> Reset</button>${u.username===S.user.username?`<span class="text-xs text-slate-400">(akun Anda)</span>`:`<button class="text-rose-600" onclick="delUser('${esc(u.username)}')"><i class="fa-solid fa-trash"></i> Hapus</button>`}</td></tr>`).join("")}</tbody></table></div>${logHtml()}</div>`;
+}
+function openUser(un){
+  const u=un?S.users.find(x=>x.username===un):{username:"",nama:"",role:"anggota",aktif:true};
+  openModal(`<h3 class="font-extrabold mb-3">${un?"Edit":"Tambah"} User</h3><div class="space-y-3">
+  <div><label class="text-xs font-semibold">Username</label><input id="u-u" class="inp" value="${esc(u.username)}"></div>
+  <div><label class="text-xs font-semibold">Nama lengkap</label><input id="u-n" class="inp" value="${esc(u.nama)}"></div>
+  <div><label class="text-xs font-semibold">Role</label><select id="u-r" class="inp" onchange="$('#u-h').textContent=RHAK[this.value]">${Object.keys(ROLE).map(r=>`<option value="${r}" ${u.role===r?"selected":""}>${ROLE[r]}</option>`).join("")}</select><p id="u-h" class="text-xs text-slate-500 mt-1">${RHAK[u.role||"anggota"]}</p></div>
+  <div><label class="text-xs font-semibold">Status</label><select id="u-a" class="inp"><option value="1" ${u.aktif?"selected":""}>Aktif</option><option value="0" ${u.aktif?"":"selected"}>Nonaktif</option></select></div>
+  <div><label class="text-xs font-semibold">${un?"Password baru (kosongkan jika tidak diganti)":"Password awal"}</label><input id="u-p" type="password" class="inp" autocomplete="new-password"></div>
+  ${un&&u.demo?`<p class="text-xs text-amber-700">Akun ini masih memakai data demo. Ganti username dan/atau password agar login demo tidak berlaku lagi.</p>`:""}</div>
+  <div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button><button class="btn btn-p" onclick="saveUser(${un?1:0},'${esc(un||"")}')">Simpan user</button></div>`);
+}
+async function saveUser(edit,old){
+  const d={username:$("#u-u").value.trim(),nama:$("#u-n").value.trim(),role:$("#u-r").value,aktif:$("#u-a").value==="1"},pw=$("#u-p").value;
+  if(pw)d.password=pw;if(edit)d.oldUsername=old;
+  if(!d.username||!d.nama||(!edit&&pw.length<4))return toast("Lengkapi data (password minimal 4 karakter)","warn");
+  if(!/^[A-Za-z0-9_.-]{3,30}$/.test(d.username))return toast("Username 3-30 karakter (huruf, angka, . _ -)","warn");
+  if(pw&&pw.length<4)return toast("Password minimal 4 karakter","warn");
+  if(S.users.some(x=>x.username.toLowerCase()===d.username.toLowerCase()&&x.username!==old))return toast("Username sudah dipakai","err");
+  const self=edit&&old===S.user.username,out=self&&(d.username!==old||pw||d.role!==S.user.role||!d.aktif);
+  const r=await apiSaveUser({data:d,by:S.user.username});if(r&&r.ok===false)return toast(r.msg||"Gagal menyimpan user","err");
+  closeModal();
+  if(out){logout();return toast("Akun Anda diubah, silakan login ulang","warn");}
+  toast("User tersimpan");vUsersReload();
+}
+async function delUser(un){
+  const u=S.users.find(x=>x.username===un);if(!u)return;
+  if(!confirm("Hapus user \""+u.username+"\" ("+u.nama+")?\nUser ini tidak akan bisa login lagi. Riwayat transaksi yang pernah ia input tetap tersimpan."))return;
+  const r=await apiSaveUser({op:"delete",username:un,by:S.user.username});if(r&&r.ok===false)return toast(r.msg||"Gagal menghapus user","err");
+  toast("User dihapus");vUsersReload();
+}
+async function resetPw(un){const p=prompt("Password baru untuk "+un+" (minimal 4 karakter):");if(!p)return;if(p.length<4)return toast("Password terlalu pendek","warn");
+  const u=S.users.find(x=>x.username===un);const r=await apiSaveUser({data:{oldUsername:un,username:un,nama:u.nama,role:u.role,aktif:u.aktif,password:p},by:S.user.username});
+  if(r&&r.ok===false)return toast(r.msg||"Gagal reset password","err");
+  if(un===S.user.username){logout();return toast("Password diganti, silakan login ulang","warn");}
+  toast("Password direset");vUsersReload();}
+function vUsersReload(){go("users");}
+
+/* ===== SINKRONISASI, BACKUP & RESET ===== */
+function setSync(st){S.sync=st;const m={ok:["bg-emerald-400",MOCK?"Mode simulasi · data lokal":"Google Sheets · tersinkron"],busy:["bg-amber-400","Menyinkronkan…"],err:["bg-rose-500","Gagal sinkron · coba lagi"]}[st];
+  $("#sdot").className="w-2 h-2 rounded-full "+m[0];$("#sync").textContent=m[1];$("#si").classList.toggle("fa-spin",st==="busy");}
+async function syncNow(manual){
+  if(S.syncing||!S.user)return;S.syncing=1;setSync("busy");
+  try{const {d,m}=await apiGetAll();
+    if(!S.user)return;if(d.ok===false||m.ok===false)throw new Error(d.msg||m.msg);
+    const sig=JSON.stringify([d.trx,d.aset||[],m.categories,m.settings,d.closed||{},d.users||[],d.pengajuan||[]]),ch=sig!==S.sig;S.sig=sig;
+    S.all=d.trx;S.aset=d.aset||[];S.trx=d.trx.filter(t=>t.status!=="Void");S.closed=d.closed||{};S.logs=d.logs||[];S.users=d.users||[];S.pj=d.pengajuan||[];S.cats=m.categories;S.set=m.settings;S.lastSync=new Date();setSync("ok");
+    if(ch||S.tab==="backup"){fillYears();if($("#modal").classList.contains("hidden"))(S.tab==="trx"?drawTrx:S.tab==="aset"?drawAset:({dash:vDash,lap:vLap,pengajuan:vPengajuan,master:vMaster,users:vUsers,backup:vBackup})[S.tab])();}
+    if(manual)toast(ch?"Data diperbarui dari server":"Data sudah yang terbaru");
+  }catch(e){setSync("err");if(manual)toast("Gagal sinkron: "+(e.message||"periksa koneksi"),"err");}
+  finally{S.syncing=0;}
+}
+function vBackup(){
+  const kb=(new Blob([JSON.stringify([S.all,S.cats,S.closed])]).size/1024).toFixed(1);
+  const st=S.sync==="err"?badge("Gagal sinkron","bg-rose-100 text-rose-700"):S.sync==="busy"?badge("Menyinkronkan…","bg-amber-100 text-amber-700"):MOCK?badge("Mode simulasi","bg-amber-100 text-amber-700"):badge('<i class="fa-solid fa-check"></i> Tersinkron',"bg-emerald-100 text-emerald-700");
+  const fm=d=>d?d.toLocaleString("id-ID",{day:"numeric",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}):"–";
+  const chips=[[S.trx.length,"Transaksi"],[S.all.length-S.trx.length,"Void"],[S.cats.length,"Kategori"],[Object.keys(S.closed).length,"Tahun ditutup"],[S.users.length,"User"],[S.aset.length,"Aset"]];
+  const ic=(i,c)=>`<div class="w-11 h-11 rounded-xl flex items-center justify-center mb-3 ${c||"bg-slate-500/10"}"><i class="fa-solid ${i}"></i></div>`;
+  $("#view").innerHTML=`<div class="tab space-y-4">
+  <div class="glass rounded-2xl p-5 flex flex-wrap items-center gap-5"><div><div class="text-sm text-slate-500">Ukuran data tersimpan</div><div class="text-3xl font-extrabold">${kb} KB</div><div class="text-sm text-slate-500">${MOCK?"tersimpan di memori browser (simulasi)":"tersimpan di Google Sheets"}</div></div>
+    <div class="flex flex-wrap gap-2">${chips.map(c=>`<div class="rounded-xl bg-slate-500/10 px-5 py-3 text-center"><div class="text-xl font-extrabold">${c[0]}</div><div class="text-xs text-slate-500">${c[1]}</div></div>`).join("")}</div></div>
+  <div class="grid md:grid-cols-3 gap-4">
+   <div class="glass rounded-2xl p-5 flex flex-col">${ic("fa-table-cells")}<h3 class="font-extrabold text-lg">Google Sheets (database online)</h3><div class="my-2 text-sm">${st} <span class="text-slate-500">· terakhir ${fm(S.lastSync)}</span></div><p class="text-sm text-slate-500 flex-1">${MOCK?"Mode simulasi: data hanya di memori browser dan kembali ke contoh saat halaman dimuat ulang. Isi URL Apps Script di Pengaturan untuk memakai Google Sheets.":"Setiap perubahan tersimpan ke Google Sheets Anda dan dibagikan ke semua pengguna (diperiksa tiap 30 detik)."}</p>
+    <div class="flex flex-wrap gap-2 mt-4"><button class="btn btn-p" onclick="syncNow(true)"><i class="fa-solid fa-rotate"></i> Sinkronkan sekarang</button><button class="btn btn-o" onclick="openSyncCfg()"><i class="fa-solid fa-gear"></i> Pengaturan</button><button class="btn btn-o" onclick="openGuide()"><i class="fa-solid fa-circle-question"></i> Panduan setup</button><button class="btn btn-o" onclick="copyGs()"><i class="fa-solid fa-copy"></i> Salin Code.gs</button></div></div>
+   <div class="glass rounded-2xl p-5 flex flex-col">${ic("fa-file-export")}<h3 class="font-extrabold text-lg">Backup seluruh data (JSON)</h3><p class="text-sm text-slate-500 flex-1 mt-2">Unduh semua transaksi (termasuk void), kategori, dan status tahun buku. Disarankan sebelum melakukan reset.</p><button class="btn btn-p mt-4" onclick="dlJson()"><i class="fa-solid fa-download"></i> Unduh backup JSON</button></div>
+   <div class="glass rounded-2xl p-5 flex flex-col border-rose-300">${ic("fa-triangle-exclamation","bg-rose-100 text-rose-600")}<h3 class="font-extrabold text-lg text-rose-600">Reset semua data</h3><p class="text-sm text-slate-500 flex-1 mt-2">Hapus semua transaksi, status tahun ditutup, dan log untuk mengetes ulang dari awal. Kategori dan user tetap; data aset kembali ke contoh awal. Tahun buku kembali ke ${DEFAULT_YEAR} dan saldo awal dikosongkan (isi ulang di Master Data).</p><button class="btn bg-rose-600 text-white mt-4" onclick="openReset()"><i class="fa-solid fa-trash-can"></i> Reset semua data</button></div>
+  </div></div>`;
+}
+function dlJson(){const b=new Blob([JSON.stringify({dibuat:new Date().toISOString(),tahunBuku:S.set.tahunBuku,kategori:S.cats,tahunDitutup:S.closed,transaksi:S.all,aset:S.aset},null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="backup-kas-pemuda-bunter-"+fmtD(new Date())+".json";a.click();URL.revokeObjectURL(a.href);toast("Backup diunduh");}
+function openSyncCfg(){openModal(`<h3 class="font-extrabold mb-2">Pengaturan Google Sheets</h3><p class="text-sm text-slate-500 mb-3">Tempel URL Web App Apps Script (berakhiran <b>/exec</b>). Disimpan di browser ini; halaman dimuat ulang setelah disimpan.</p><input id="cu" class="inp" placeholder="https://script.google.com/macros/s/.../exec" value="${MOCK?"":esc(SCRIPT_URL)}">
+  <div class="flex flex-wrap justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button>${MOCK?"":`<button class="btn btn-o" onclick="saveUrl('')">Pakai mode simulasi</button>`}<button class="btn btn-p" onclick="saveUrl($('#cu').value.trim())">Simpan &amp; muat ulang</button></div>`);}
+function saveUrl(u){if(u&&!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u))return toast("URL harus berupa Web App Apps Script berakhiran /exec","warn");
+  try{u?localStorage.setItem("kasUrl",u):localStorage.removeItem("kasUrl");sessionStorage.removeItem("kasUser");}catch(e){return toast("Browser memblokir penyimpanan lokal","err");}location.reload();}
+/* --- Salin Code.gs (sumber tertanam di #gs-src) --- */
+function gsSource(){return ($("#gs-src").textContent||"").replace(/^\n/,"");}
+async function copyGs(){
+  const t=gsSource(),n=t.split("\n").length;
+  try{await navigator.clipboard.writeText(t);return toast("Code.gs disalin ("+n+" baris). Tempel di Apps Script.");}catch(e){}
+  try{const a=document.createElement("textarea");a.value=t;a.style.cssText="position:fixed;opacity:0";document.body.appendChild(a);a.select();const ok=document.execCommand("copy");a.remove();if(ok)return toast("Code.gs disalin ("+n+" baris). Tempel di Apps Script.");}catch(e){}
+  openModal(`<h3 class="font-extrabold mb-2">Code.gs</h3><p class="text-sm text-slate-500 mb-2">Browser memblokir penyalinan otomatis. Pilih semua (Ctrl+A) lalu salin (Ctrl+C) dari kotak ini.</p><textarea id="gs-box" readonly class="inp font-mono text-xs" style="height:55vh;white-space:pre"></textarea><div class="flex justify-end mt-3"><button class="btn btn-p" onclick="closeModal()">Tutup</button></div>`);
+  const b=$("#gs-box");b.value=t;b.focus();b.select();
+}
+function openGuide(){openModal(`<h3 class="font-extrabold mb-2">Panduan setup Google Sheets</h3><ol class="text-sm list-decimal pl-5 space-y-1.5"><li>Buat Google Spreadsheet baru, buka <b>Extensions &gt; Apps Script</b>, hapus isi bawaan, lalu tempel seluruh <b>Code.gs</b> (klik <b>Salin Code.gs</b> di bawah).</li><li>Disarankan jalankan fungsi <b>setup</b> sekali dan setujui izin (Spreadsheet &amp; Drive); jika terlewat, sheet dibuat otomatis saat login pertama. Fungsi ini membuat sheet <b>Users, Transaksi, Tahun, Kategori, Pengaturan, Log, Aset</b> beserta data awal. Aman dijalankan ulang; data yang sudah ada tidak ditimpa.</li><li>Jika memakai spreadsheet lama dengan kategori lama, jalankan juga <b>migrasi</b> sekali.</li><li><b>Deploy &gt; New deployment &gt; Web app</b>: Execute as <b>Me</b>, akses <b>Anyone</b>. Setiap Code.gs diubah, pilih <b>Manage deployments &gt; Edit &gt; New version</b>.</li><li>Salin URL <b>/exec</b>, tempel di <b>Pengaturan</b> pada kartu Google Sheets (menu Backup &amp; Data).</li><li>Login ulang, ganti password bawaan, isi kas awal di <b>Master Data &gt; Setting Tahun Buku</b>, lalu isi anggaran per kategori bila perlu.</li></ol><p class="text-xs text-slate-500 mt-3">Foto bukti transaksi tersimpan otomatis di folder Google Drive <b>Bukti Kas Pemuda Bunter</b>.</p><div class="flex flex-wrap justify-end gap-2 mt-4"><button class="btn btn-o" onclick="copyGs()"><i class="fa-solid fa-copy"></i> Salin Code.gs</button><button class="btn btn-p" onclick="closeModal()">Mengerti</button></div>`);}
+function openReset(){openModal(`<h3 class="font-extrabold mb-2 text-rose-600">Reset semua data?</h3><p class="text-sm mb-1">Semua transaksi (termasuk void), status tahun ditutup, dan log aktivitas dihapus. Kategori dan user tetap; data aset kembali ke contoh awal. Tahun buku kembali ke ${DEFAULT_YEAR} dan saldo awal dikosongkan (isi ulang di Master Data).</p><p class="text-xs text-slate-500 mb-3">Tidak dapat dibatalkan. File bukti di Google Drive tidak ikut terhapus. Unduh backup JSON dulu bila perlu.</p><input id="rs" class="inp" placeholder="Ketik RESET untuk konfirmasi">
+  <div class="flex justify-end gap-2 mt-4"><button class="btn btn-g" onclick="closeModal()">Batal</button><button class="btn bg-rose-600 text-white" onclick="doReset()">Reset sekarang</button></div>`);}
+async function doReset(){if($("#rs").value.trim()!=="RESET")return toast("Ketik RESET (huruf besar) untuk konfirmasi","warn");
+  const r=await call("resetAll");if(!r||r.ok===false)return toast((r&&r.msg)||"Gagal mereset","err");
+  S.year=DEFAULT_YEAR;closeModal();toast("Semua data direset");go("backup");}
+
+/* ===== LOG ===== */
+function logHtml(){return `<h2 class="text-lg font-extrabold pt-2">Log Aktivitas</h2><div class="glass rounded-2xl overflow-auto max-h-[50vh]"><table class="w-full text-sm"><thead><tr><th>Waktu</th><th>User</th><th>Aktivitas</th></tr></thead><tbody>${S.logs.length?S.logs.slice(0,100).map(l=>`<tr><td class="whitespace-nowrap">${esc(l.waktu)}</td><td class="font-semibold">${esc(l.user)}</td><td>${esc(l.aksi)}</td></tr>`).join(""):`<tr><td colspan="3" class="text-center py-8 text-slate-500">Belum ada aktivitas tercatat.</td></tr>`}</tbody></table></div>`;}
+
+
+/* Tabel responsif: beri data-label pada tiap sel agar tampil sebagai kartu di layar HP (lihat CSS .rtb) */
+function labelTables(){
+  document.querySelectorAll("#view table,#mbox table").forEach(tb=>{
+    const hs=[...tb.querySelectorAll("thead th")].map(x=>x.textContent.trim());if(!hs.length)return;tb.classList.add("rtb");
+    tb.querySelectorAll("tbody tr").forEach(tr=>{let c=0;[...tr.children].forEach(td=>{const s=+td.getAttribute("colspan")||1;if(s===1&&!td.dataset.label)td.dataset.label=hs[c]||"";c+=s;});});
+  });
+}
+let _lt=0;if(typeof MutationObserver!=="undefined")new MutationObserver(()=>{if(_lt)return;_lt=requestAnimationFrame(()=>{_lt=0;labelTables();});}).observe(document.body,{childList:true,subtree:true});
+
+/* ===== INIT ===== */
+(function init(){
+  let d=window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches;try{const t=localStorage.getItem("kasTheme");if(t)d=t==="dark";}catch(e){}
+  if(d){document.documentElement.classList.add("dark");$("#dm").className="fa-solid fa-sun";}
+  window.addEventListener("online",netStat);window.addEventListener("offline",netStat);netStat();
+  renderDemo();
+  try{const s=sessionStorage.getItem("kasUser");if(s){S.user=JSON.parse(s);startApp();}}catch(e){}
+})();
+
+/* PANDUAN: isi SCRIPT_URL di atas dengan URL Web App (/exec) hasil deploy Code.gs.
+   Struktur sheet, setup(), dan langkah deploy ada di panduan terpisah. Peran, saldo guard, void, dan
+   penolakan tahun terkunci DIVALIDASI ULANG di server (Code.gs); validasi di klien hanya untuk kenyamanan. */
+</script>
+</body>
+</html>
