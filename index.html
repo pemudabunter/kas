@@ -564,7 +564,7 @@ function pengajuanOp(p){
 /* ===== KONFIGURASI =====
    WAJIB untuk GitHub: ganti "URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA" di bawah dengan URL Web App (berakhiran /exec),
    agar semua orang yang membuka link otomatis terhubung ke Google Sheets yang sama. */
-let SCRIPT_URL = (()=>{try{return localStorage.getItem("kasUrl");}catch(e){return null;}})() || "URL_WEB_APP_GOOGLE_APPS_SCRIPT_ANDA";
+let SCRIPT_URL = (()=>{try{return localStorage.getItem("kasUrl");}catch(e){return null;}})() || "https://script.google.com/macros/s/AKfycbxYJ_vhAxuSpqJJx5h1fnKzreE2lRHa69L0YYhf_B2tCfZyV6uUuvPczZ0PZlj6ZcUB/exec";
 const MOCK = SCRIPT_URL.indexOf("URL_") === 0;
 const KAWAL="Kas awal kepemudaan",KBELI="Pengadaan/Pembelian Aset",KJUAL="Hasil Penjualan Aset";
 const BLN = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
